@@ -36,4 +36,64 @@
 
         /* Log */
         #history { margin-top: 30px; background: var(--card); border-radius: 24px; padding: 20px; border: 1px solid #1a1a1a; }
-        .h-title { font-size: 12px;
+        .h-title { font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; text-align: left; }
+        .h-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #222; font-size: 13px; }
+        .h-item:last-child { border: none; }
+        .h-client { font-weight: 600; color: #eee; }
+        .h-profit { color: var(--green); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="logo.png" class="logo-main" alt="Logo" onerror="this.src='https://via.placeholder.com/85/000000/00e5ff?text=KZL'">
+        <h1>KICKZONELAB</h1>
+    </div>
+
+    <div class="stats">
+        <div class="card">
+            <span class="stat-v" id="valLordo">€ 0</span>
+            <span class="stat-l">Vendite</span>
+        </div>
+        <div class="card">
+            <span class="stat-v" id="valProfit" style="color: var(--green);">€ 0</span>
+            <span class="stat-l">Profitto</span>
+        </div>
+    </div>
+
+    <div class="h-title">Scegli Prodotto</div>
+    <div class="grid">
+        <div class="btn" onclick="addS('Jordan 4', 350, 110)"><b>Jordan 4</b><span>+€110 Profit</span></div>
+        <div class="btn" onclick="addS('McQueen', 130, 55)"><b>McQueen</b><span>+€55 Profit</span></div>
+        <div class="btn" onclick="addS('Dunk Low', 190, 70)"><b>Dunk Low</b><span>+€70 Profit</span></div>
+        <div class="btn" onclick="addS('Travis Scott', 1050, 320)"><b>Travis Scott</b><span>+€320 Profit</span></div>
+        <div class="btn" onclick="addS('Adidas Campus', 125, 45)"><b>Campus</b><span>+€45 Profit</span></div>
+        <div class="btn" onclick="addS('Yeezy 350', 260, 85)"><b>Yeezy 350</b><span>+€85 Profit</span></div>
+    </div>
+
+    <div id="history">
+        <div class="h-title">Ultime Transazioni</div>
+        <div id="log"><p style="color:#444; font-size:12px;">Nessuna vendita registrata</p></div>
+    </div>
+
+    <script>
+        let l = 0; let p = 0;
+        function addS(n, pr, pf) {
+            let c = prompt("Nome cliente per " + n + ":");
+            if(!c) return;
+
+            l += pr; p += pf;
+            document.getElementById('valLordo').innerText = "€ " + l;
+            document.getElementById('valProfit').innerText = "€ " + p;
+
+            const log = document.getElementById('log');
+            if(log.innerHTML.includes("Nessuna")) log.innerHTML = "";
+            
+            const div = document.createElement('div');
+            div.className = 'h-item';
+            div.innerHTML = `<span class="h-client">${c} <br><small style="color:#666; font-weight:400">${n}</small></span> <span class="h-profit">+€${pf}</span>`;
+            log.prepend(div);
+        }
+    </script>
+</body>
+</html>
