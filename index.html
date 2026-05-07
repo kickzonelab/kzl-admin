@@ -3,167 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KZL Business Tracker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" href="logo.png">
+
+    <title>KZL Tracker</title>
     <style>
-        :root { --accent: #00e5ff; --bg: #050505; --card: #121212; --success: #00ffa3; }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; padding: 15px; min-height: 100vh; }
-
-        h1 { font-family: 'Montserrat'; font-weight: 900; font-size: 24px; text-align: center; margin: 10px 0 20px; letter-spacing: 1px; }
-
-        /* DASHBOARD */
-        .goal-section { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid #1a1a1a; margin-bottom: 20px; }
-        .progress-container { background: #000; height: 12px; border-radius: 10px; overflow: hidden; margin: 10px 0; border: 1px solid #1a1a1a; }
-        .progress-bar { background: var(--accent); height: 100%; width: 0%; transition: width 1s ease; box-shadow: 0 0 15px var(--accent); }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .stat-box small { font-size: 9px; color: #555; display: block; font-weight: 700; }
-        .stat-box span { font-family: 'Montserrat'; font-size: 20px; font-weight: 900; }
-
-        /* GRID PRODOTTI */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .product-btn { 
-            background: var(--card); border-radius: 20px; padding: 15px 10px; text-align: center; 
-            border: 1px solid #1a1a1a; cursor: pointer; transition: 0.2s;
-        }
-        .product-btn:active { transform: scale(0.95); border-color: var(--accent); }
-        
-        /* IMMAGINI PRODOTTI */
-        .prod-img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5)); }
-        .product-btn span { font-weight: 600; font-size: 13px; display: block; }
-        .product-btn .p-tag { color: var(--success); font-size: 11px; font-weight: 800; }
-
-        /* CRONOLOGIA DETTAGLIATA */
-        .history { margin-top: 30px; }
-        .history-item { 
-            background: #0f0f0f; padding: 15px; border-radius: 15px; margin-bottom: 10px; 
-            display: flex; align-items: center; border: 1px solid #1a1a1a;
-        }
-        .hist-img { width: 40px; height: 40px; object-fit: contain; margin-right: 15px; }
-        .hist-info { flex: 1; }
-        .hist-info .client { font-size: 10px; color: var(--accent); font-weight: 700; text-transform: uppercase; }
-        .hist-info .model { font-weight: 600; font-size: 14px; display: block; }
-        .hist-info .date { font-size: 9px; color: #444; }
-        .hist-profit { font-family: 'Montserrat'; font-weight: 900; color: #fff; }
-
-        .reset-btn { width: 100%; background: none; border: none; color: #222; font-size: 10px; font-weight: 800; margin-top: 30px; padding: 10px; }
+        body { background: #000; color: white; font-family: sans-serif; text-align: center; padding: 50px 20px; }
+        .logo-img { width: 120px; height: 120px; border-radius: 25px; margin-bottom: 20px; border: 2px solid #00e5ff; }
+        h1 { letter-spacing: 2px; }
     </style>
 </head>
 <body>
-
+    <img src="logo.png" class="logo-img" alt="Logo">
     <h1>KICKZONELAB</h1>
-
-    <div class="goal-section">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <small style="color:#555; font-weight:800;">PROFIT TARGET</small>
-            <span id="pct" style="color:var(--accent); font-family:Montserrat; font-weight:900;">0%</span>
-        </div>
-        <div class="progress-container"><div class="progress-bar" id="bar"></div></div>
-        <div class="stats-grid">
-            <div class="stat-box"><small>NETTO 30gg</small><span id="prof">€ 0</span></div>
-            <div class="stat-box"><small>LORDO 30gg</small><span id="lord" style="color:#444;">€ 0</span></div>
-        </div>
-    </div>
-
-    <div class="grid">
-        <div class="product-btn" onclick="reg('McQueen', 110, 42, 'img/mcqueen.png')">
-            <img src="img/mcqueen.png" class="prod-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2742/2742633.png'">
-            <span>McQueen</span>
-            <div class="p-tag">+€42</div>
-        </div>
-
-        <div class="product-btn" onclick="reg('Jordan 1', 350, 120, 'img/jordan.png')">
-            <img src="img/jordan.png" class="prod-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2742/2742633.png'">
-            <span>Jordan 1</span>
-            <div class="p-tag">+€120</div>
-        </div>
-
-        <div class="product-btn" onclick="reg('Travis Scott', 1100, 350, 'img/travis.png')">
-            <img src="img/travis.png" class="prod-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2742/2742633.png'">
-            <span>Travis</span>
-            <div class="p-tag">+€350</div>
-        </div>
-
-        <div class="product-btn" onclick="reg('Custom', 0, 0, 'img/box.png', true)">
-            <img src="img/box.png" class="prod-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2742/2742633.png'">
-            <span>Custom</span>
-            <div class="p-tag">Manuale</div>
-        </div>
-    </div>
-
-    <div class="history">
-        <div style="font-size:11px; font-weight:800; color:#333; margin-bottom:15px; letter-spacing:1px;">ULTIME VENDITE</div>
-        <div id="hist"></div>
-    </div>
-
-    <button class="reset-btn" onclick="resetData()">RESET DATABASE</button>
-
-    <script>
-        const target = 1500;
-        let dati = JSON.parse(localStorage.getItem('kzl_final_db')) || [];
-
-        function reg(nome, lordo, profitto, immagine, manual = false) {
-            let fn = nome, fl = lordo, fp = profitto;
-            
-            // Chiede il nome della persona
-            let cliente = prompt("Nome del cliente:");
-            if (!cliente) cliente = "Cliente Anonimo";
-
-            if(manual) {
-                fl = parseFloat(prompt("Incasso Lordo (€):") || 0);
-                fp = parseFloat(prompt("Guadagno Netto (€):") || 0);
-                fn = prompt("Modello:") || "Scarpa";
-            }
-
-            // Salva con data automatica
-            dati.unshift({ 
-                n: fn, 
-                l: fl, 
-                p: fp, 
-                img: immagine,
-                c: cliente,
-                d: new Date().toLocaleString('it-IT', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }),
-                timestamp: Date.now() 
-            });
-            save();
-        }
-
-        function save() {
-            localStorage.setItem('kzl_final_db', JSON.stringify(dati));
-            render();
-        }
-
-        function render() {
-            const ora = Date.now();
-            const mese = 30 * 24 * 60 * 60 * 1000;
-            const validi = dati.filter(x => (ora - x.timestamp) < mese);
-            
-            const pTot = validi.reduce((a, b) => a + b.p, 0);
-            const lTot = validi.reduce((a, b) => a + b.l, 0);
-            
-            document.getElementById('prof').innerText = "€ " + pTot;
-            document.getElementById('lord').innerText = "€ " + lTot;
-            
-            let p = Math.min((pTot / target) * 100, 100);
-            document.getElementById('bar').style.width = p + "%";
-            document.getElementById('pct').innerText = Math.round(p) + "%";
-
-            document.getElementById('hist').innerHTML = dati.slice(0, 10).map(x => `
-                <div class="history-item">
-                    <img src="${x.img}" class="hist-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2742/2742633.png'">
-                    <div class="hist-info">
-                        <span class="client">${x.c}</span>
-                        <span class="model">${x.n}</span>
-                        <span class="date">${x.d}</span>
-                    </div>
-                    <div class="hist-profit">+€${x.p}</div>
-                </div>
-            `).join('');
-        }
-
-        function resetData() { if(confirm("Cancelli tutto?")) { dati = []; save(); } }
-        render();
-    </script>
+    <p>Se vedi il logo sopra, clicca Condividi > Aggiungi a Home</p>
 </body>
 </html>
