@@ -3,22 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <link rel="apple-touch-icon" href="logo.png">
-    <link rel="icon" href="logo.png">
+    <link rel="icon" type="image/png" href="logo.png">
 
-    <title>KZL Tracker</title>
+    <title>KZL ADMIN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
-        body { background: #000; color: white; font-family: sans-serif; text-align: center; padding: 50px 20px; }
-        .logo-img { width: 120px; height: 120px; border-radius: 25px; margin-bottom: 20px; border: 2px solid #00e5ff; }
-        h1 { letter-spacing: 2px; }
-    </style>
-</head>
-<body>
-    <img src="logo.png" class="logo-img" alt="Logo">
-    <h1>KICKZONELAB</h1>
-    <p>Se vedi il logo sopra, clicca Condividi > Aggiungi a Home</p>
-</body>
-</html>
+        :root { --accent: #00e5ff; --bg: #000000; --card: #111111; --green: #00ff88; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; margin: 0; padding: 20px; -webkit-font-smoothing: antialiased; }
+        
+        /* Header */
+        .header { text-align: center; margin-top: 20px; margin-bottom: 30px; }
+        .logo-main { width: 85px; height: 85px; border-radius: 20px; border: 2px solid var(--accent); margin-bottom: 15px; object-fit: cover; }
+        h1 { font-family: 'Montserrat'; font-size: 22px; letter-spacing: 4px; margin: 0; }
+
+        /* Dashboard */
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .card { background: var(--card); padding: 20px; border-radius: 24px; border: 1px solid #222; text-align: center; }
+        .stat-v { font-size: 24px; font-weight: 900; color: var(--accent); display: block; }
+        .stat-l { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; display: block; }
+
+        /* Prodotti */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn { background: var(--card); border: 1px solid #282828; padding: 18px 10px; border-radius: 18px; color: white; text-align: center; position: relative; overflow: hidden; transition: 0.1s; }
+        .btn:active { background: #1a1a1a; transform: scale(0.96); border-color: var(--accent); }
+        .btn b { display: block; font-size: 14px; margin-bottom: 4px; }
+        .btn span { font-size: 11px; color: var(--green); font-weight: 600; }
+
+        /* Log */
+        #history { margin-top: 30px; background: var(--card); border-radius: 24px; padding: 20px; border: 1px solid #1a1a1a; }
+        .h-title { font-size: 12px;
