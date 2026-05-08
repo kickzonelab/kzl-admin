@@ -7,111 +7,63 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="logo.png">
     <title>KZL ADMIN</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #00e5ff; --bg: #000; --card: #111; --green: #00ff88; }
+        :root { --accent: #00e5ff; --bg: #000; --card: #121212; --green: #00ff88; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background: var(--bg); 
-            color: white; 
-            margin: 0; 
-            padding: env(safe-area-inset-top) 20px 50px 20px;
-            overflow-x: hidden;
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; margin: 0; padding: env(safe-area-inset-top) 15px 30px 15px; }
+
+        .logo-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; margin-top: 10px; }
+        .logo-header img { width: 25px; height: 25px; border-radius: 6px; border: 1px solid var(--accent); }
+        .logo-header h1 { font-family: 'Montserrat'; font-size: 12px; letter-spacing: 2px; margin: 0; }
+
+        /* Barra compatta */
+        .top-bar {
+            background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid #222; border-radius: 50px; display: flex; justify-content: space-around;
+            padding: 8px 15px; margin-bottom: 15px;
         }
+        .mini-stat { text-align: center; }
+        .mini-stat b { display: block; font-size: 16px; color: var(--accent); }
+        .mini-stat span { font-size: 8px; color: #666; text-transform: uppercase; }
 
-        .header { text-align: center; margin-bottom: 25px; margin-top: 20px; }
-        .logo-main { width: 80px; height: 80px; border-radius: 20px; border: 2px solid var(--accent); margin-bottom: 10px; }
-        h1 { font-family: 'Montserrat'; font-size: 20px; letter-spacing: 4px; margin: 0; }
-
-        .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .card { background: var(--card); padding: 15px; border-radius: 22px; border: 1px solid #222; text-align: center; }
-        .stat-v { font-size: 22px; font-weight: 700; color: var(--accent); display: block; }
-        .stat-l { font-size: 10px; color: #666; text-transform: uppercase; margin-top: 4px; display: block; }
+        /* Area Grafico */
+        .chart-container {
+            background: var(--card); border: 1px solid #222; border-radius: 20px;
+            padding: 15px; margin-bottom: 20px; height: 180px;
+        }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn { 
-            background: var(--card); 
-            border: 1px solid #333; 
-            padding: 20px 10px; 
-            border-radius: 18px; 
-            text-align: center; 
-            transition: 0.1s;
-        }
-        .btn:active { transform: scale(0.95); border-color: var(--accent); background: #1a1a1a; }
-        .btn b { display: block; font-size: 14px; margin-bottom: 2px; }
-        .btn span { font-size: 10px; color: var(--green); opacity: 0.8; }
+        .btn { background: var(--card); border: 1px solid #252525; padding: 15px 10px; border-radius: 18px; text-align: center; }
+        .btn:active { transform: scale(0.95); background: #1a1a1a; border-color: var(--accent); }
+        .btn b { display: block; font-size: 13px; margin-bottom: 2px; }
+        .btn span { font-size: 9px; color: var(--green); }
 
-        #history { margin-top: 30px; background: var(--card); border-radius: 22px; padding: 20px; border: 1px solid #1a1a1a; }
-        .h-title { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; }
-        .h-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #222; }
-        .h-info { font-size: 13px; }
-        .h-info small { color: #666; display: block; }
+        #history { margin-top: 20px; background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #1a1a1a; }
+        .h-title { font-size: 10px; color: #444; text-transform: uppercase; margin-bottom: 10px; }
+        .h-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; font-size: 12px; }
         .h-pf { color: var(--green); font-weight: 700; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <img src="logo.png" class="logo-main" alt="Logo">
+    <div class="logo-header">
+        <img src="logo.png" alt="L">
         <h1>KICKZONELAB</h1>
     </div>
 
-    <div class="dashboard">
-        <div class="card">
-            <span class="stat-v" id="valLordo">0</span>
-            <span class="stat-l">Vendite (€)</span>
-        </div>
-        <div class="card">
-            <span class="stat-v" id="valProfit" style="color: var(--green);">0</span>
-            <span class="stat-l">Profitto (€)</span>
-        </div>
+    <div class="top-bar">
+        <div class="mini-stat"><b><span id="valLordo">0</span>€</b><span>Lordo</span></div>
+        <div class="mini-stat"><b><span id="valProfit" style="color: var(--green);">0</span>€</b><span>Profitto</span></div>
     </div>
 
-    <div class="h-title">Registra</div>
+    <div class="chart-container">
+        <canvas id="profitChart"></canvas>
+    </div>
+
     <div class="grid">
-        <div class="btn" onclick="addS('Jordan 4', 350, 100)"><b>Jordan 4</b><span>Base +€100</span></div>
-        <div class="btn" onclick="addS('McQueen', 130, 50)"><b>McQueen</b><span>Base +€50</span></div>
-        <div class="btn" onclick="addS('Travis Scott', 1100, 300)"><b>Travis Scott</b><span>Base +€300</span></div>
-        <div class="btn" onclick="addS('Dunk Low', 180, 60)"><b>Dunk Low</b><span>Base +€60</span></div>
-        <div class="btn" onclick="addS('Adidas Campus', 120, 40)"><b>Campus</b><span>Base +€40</span></div>
-        <div class="btn" onclick="addS('Yeezy 350', 250, 80)"><b>Yeezy 350</b><span>Base +€80</span></div>
-    </div>
-
-    <div id="history">
-        <div class="h-title">Recenti</div>
-        <div id="log"></div>
-    </div>
-
-    <script>
-        let totalL = 0;
-        let totalP = 0;
-
-        function addS(shoeName, defaultPrice, defaultProfit) {
-            // 1. Chiedi nome cliente
-            let client = prompt("Nome cliente:");
-            if (!client) return;
-
-            // 2. Chiedi il profitto (propone quello standard ma puoi cambiarlo)
-            let actualProfit = prompt("Conferma o cambia il profitto per " + shoeName + ":", defaultProfit);
-            if (actualProfit === null) return;
-            actualProfit = parseFloat(actualProfit);
-
-            // Aggiorna totali
-            totalL += defaultPrice; 
-            totalP += actualProfit;
-
-            document.getElementById('valLordo').innerText = totalL;
-            document.getElementById('valProfit').innerText = totalP;
-
-            // Aggiungi allo storico
-            const log = document.getElementById('log');
-            const div = document.createElement('div');
-            div.className = 'h-item';
-            div.innerHTML = `<div class="h-info">${client}<small>${shoeName}</small></div><div class="h-pf">+€${actualProfit}</div>`;
-            log.prepend(div);
-        }
-    </script>
-</body>
-</html>
+        <div class="btn" onclick="addS('Jordan 4', 350, 100)"><b>Jordan 4</b><span>Base +100€</span></div>
+        <div class="btn" onclick="addS('McQueen', 130, 50)"><b>McQueen</b><span>Base +50€</span></div>
+        <div class="btn" onclick="addS('Travis Scott', 1100, 300)"><b>Travis Scott</b><span>Base +300€</span></div>
+        <div class="
