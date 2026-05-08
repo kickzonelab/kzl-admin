@@ -6,153 +6,114 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="logo.png">
-    <title>KZL ADMIN PRO</title>
+    <title>KZL ADMIN</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #00e5ff; --bg: #000; --card: #121212; --green: #00ff88; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; margin: 0; padding: env(safe-area-inset-top) 15px 80px 15px; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; padding: env(safe-area-inset-top) 15px 100px 15px; }
 
-        /* Barra superiore */
-        .top-bar { background: rgba(20,20,20,0.8); backdrop-filter: blur(10px); border: 1px solid #222; border-radius: 50px; display: flex; justify-content: space-around; padding: 10px; margin-bottom: 20px; }
-        .mini-stat { text-align: center; }
-        .mini-stat b { display: block; font-size: 16px; color: var(--accent); }
-        .mini-stat span { font-size: 8px; color: #666; text-transform: uppercase; }
+        /* Header fisso */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5px; }
+        .header h1 { font-family: 'Montserrat'; font-size: 14px; letter-spacing: 2px; color: var(--accent); }
 
-        /* Sezioni */
-        .page { display: none; animation: fadeIn 0.3s; }
+        /* Dashboard compatta */
+        .top-stats { background: var(--card); border: 1px solid #222; border-radius: 20px; display: flex; justify-content: space-around; padding: 15px; margin-bottom: 20px; }
+        .stat-box { text-align: center; }
+        .stat-box b { display: block; font-size: 18px; color: white; }
+        .stat-box span { font-size: 9px; color: #666; text-transform: uppercase; }
+
+        /* Pagine */
+        .page { display: none; }
         .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Bottoni scarpe */
+        /* Griglia Bottoni */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn { background: var(--card); border: 1px solid #252525; padding: 18px 10px; border-radius: 20px; text-align: center; }
-        .btn:active { transform: scale(0.95); border-color: var(--accent); }
+        .btn { background: var(--card); border: 1px solid #222; padding: 20px 10px; border-radius: 18px; text-align: center; }
+        .btn:active { background: #1a1a1a; border-color: var(--accent); }
+        .btn b { display: block; font-size: 14px; margin-bottom: 5px; }
+        .btn span { font-size: 10px; color: var(--green); }
 
-        /* Classifica e Tabelle */
-        .stat-box { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid #222; margin-bottom: 15px; }
-        .rank-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #222; font-size: 14px; }
-        .rank-item:last-child { border: none; }
-        .winner { color: gold; font-weight: bold; }
+        /* Menu Basso Fisso */
+        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: #111; border-top: 1px solid #222; display: flex; justify-content: space-around; padding: 15px 10px 30px; }
+        .nav-item { color: #555; font-size: 10px; font-weight: 600; text-transform: uppercase; text-decoration: none; border: none; background: none; }
+        .nav-item.active { color: var(--accent); }
 
-        /* Menu Basso */
-        .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #111; border-top: 1px solid #222; display: flex; justify-content: space-around; padding: 15px 10px calc(15px + env(safe-area-inset-bottom)); z-index: 1000; }
-        .tab-item { color: #555; font-size: 10px; text-transform: uppercase; font-weight: 600; text-align: center; }
-        .tab-item.active { color: var(--accent); }
-
-        h2 { font-family: 'Montserrat'; font-size: 14px; color: #555; text-transform: uppercase; margin-top: 0; }
+        /* Classifica */
+        .rank-list { background: var(--card); border-radius: 15px; padding: 15px; border: 1px solid #222; }
+        .rank-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #222; font-size: 13px; }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <div class="mini-stat"><b id="totalLordo">0€</b><span>Lordo Tot.</span></div>
-        <div class="mini-stat"><b id="totalProfit" style="color: var(--green);">0€</b><span>Profitto</span></div>
+    <div class="header">
+        <h1>KICKZONELAB</h1>
+        <img src="logo.png" style="width:30px; border-radius:5px;">
     </div>
 
-    <div id="home" class="page active">
+    <div class="top-stats">
+        <div class="stat-box"><b id="dLordo">0€</b><span>Lordo</span></div>
+        <div class="stat-box"><b id="dProfit" style="color:var(--green)">0€</b><span>Profitto</span></div>
+    </div>
+
+    <div id="p-home" class="page active">
         <div class="grid">
-            <div class="btn" onclick="addS('Jordan 4', 350, 100)"><b>Jordan 4</b><br><span style="color:var(--green);font-size:10px">+100€</span></div>
-            <div class="btn" onclick="addS('McQueen', 130, 50)"><b>McQueen</b><br><span style="color:var(--green);font-size:10px">+50€</span></div>
-            <div class="btn" onclick="addS('Travis Scott', 1100, 300)"><b>Travis Scott</b><br><span style="color:var(--green);font-size:10px">+300€</span></div>
-            <div class="btn" onclick="addS('Dunk Low', 180, 60)"><b>Dunk Low</b><br><span style="color:var(--green);font-size:10px">+60€</span></div>
-            <div class="btn" onclick="addS('Campus', 120, 40)"><b>Campus</b><br><span style="color:var(--green);font-size:10px">+40€</span></div>
-            <div class="btn" onclick="addS('Yeezy 350', 250, 80)"><b>Yeezy 350</b><br><span style="color:var(--green);font-size:10px">+80€</span></div>
+            <div class="btn" onclick="addSale('Jordan 4', 350, 100)"><b>Jordan 4</b><span>+100€</span></div>
+            <div class="btn" onclick="addSale('McQueen', 130, 50)"><b>McQueen</b><span>+50€</span></div>
+            <div class="btn" onclick="addSale('Travis Scott', 1100, 300)"><b>Travis Scott</b><span>+300€</span></div>
+            <div class="btn" onclick="addSale('Dunk Low', 180, 60)"><b>Dunk Low</b><span>+60€</span></div>
+            <div class="btn" onclick="addSale('Campus', 120, 40)"><b>Campus</b><span>+40€</span></div>
+            <div class="btn" onclick="addSale('Yeezy 350', 250, 80)"><b>Yeezy 350</b><span>+80€</span></div>
         </div>
     </div>
 
-    <div id="stats" class="page">
-        <h2>🔥 Più Vendute</h2>
-        <div class="stat-box" id="rankingList">
-            </div>
+    <div id="p-rank" class="page">
+        <h2 style="font-size:12px; color:#444; margin-bottom:10px;">TOP ARTICOLI</h2>
+        <div class="rank-list" id="rankData">
+            <p style="font-size:12px; color:#555;">Nessun dato</p>
+        </div>
     </div>
 
-    <div id="months" class="page">
-        <h2>📅 Resoconto Mensile</h2>
-        <div class="stat-box" id="monthlySummary">
-            </div>
-        <button onclick="clearData()" style="background:none; border:none; color:red; font-size:10px; width:100%; margin-top:20px;">RESET DATI</button>
-    </div>
-
-    <div class="tab-bar">
-        <div class="tab-item active" onclick="showP('home', this)">🏠 Home</div>
-        <div class="tab-item" onclick="showP('stats', this)">🏆 Rank</div>
-        <div class="tab-item" onclick="showP('months', this)">📊 Mesi</div>
+    <div class="nav">
+        <button class="nav-item active" onclick="tab('p-home', this)">🏠 Vendita</button>
+        <button class="nav-item" onclick="tab('p-rank', this)">🏆 Classifica</button>
     </div>
 
     <script>
-        let sales = JSON.parse(localStorage.getItem('kzl_sales')) || [];
+        let totalL = 0;
+        let totalP = 0;
+        let counts = {};
 
-        function showP(id, el) {
+        function tab(pageId, el) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
             el.classList.add('active');
-            if(id === 'stats') updateRank();
-            if(id === 'months') updateMonths();
+            if(pageId === 'p-rank') showRank();
         }
 
-        function addS(shoe, lordo, profit) {
-            let client = prompt("Cliente:");
-            if(!client) return;
-            let actualP = prompt("Conferma profitto:", profit);
-            if(actualP === null) return;
-            
-            const sale = {
-                shoe: shoe,
-                lordo: lordo,
-                profit: parseFloat(actualP),
-                date: new Date().toISOString()
-            };
-            
-            sales.push(sale);
-            localStorage.setItem('kzl_sales', JSON.stringify(sales));
-            updateTotals();
+        function addSale(name, lordo, profit) {
+            let p = prompt("Profitto per " + name + ":", profit);
+            if (p === null) return;
+            p = parseFloat(p);
+
+            totalL += lordo;
+            totalP += p;
+            counts[name] = (counts[name] || 0) + 1;
+
+            document.getElementById('dLordo').innerText = totalL + "€";
+            document.getElementById('dProfit').innerText = totalP + "€";
         }
 
-        function updateTotals() {
-            let tL = sales.reduce((a, b) => a + b.lordo, 0);
-            let tP = sales.reduce((a, b) => a + b.profit, 0);
-            document.getElementById('totalLordo').innerText = tL + "€";
-            document.getElementById('totalProfit').innerText = tP + "€";
-        }
-
-        function updateRank() {
-            const counts = {};
-            sales.forEach(s => counts[s.shoe] = (counts[s.shoe] || 0) + 1);
-            const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
-            
+        function showRank() {
             let html = "";
-            sorted.forEach((item, i) => {
-                html += `<div class="rank-item ${i===0?'winner':''}">
-                    <span>${i+1}. ${item[0]}</span>
-                    <span>${item[1]} paia</span>
-                </div>`;
+            let items = Object.entries(counts).sort((a,b) => b[1] - a[1]);
+            items.forEach(item => {
+                html += `<div class="rank-row"><span>${item[0]}</span><b>${item[1]} Paia</b></div>`;
             });
-            document.getElementById('rankingList').innerHTML = html || "Nessuna vendita";
+            document.getElementById('rankData').innerHTML = html || "Vendi qualcosa per vedere la classifica!";
         }
-
-        function updateMonths() {
-            const months = {};
-            sales.forEach(s => {
-                const m = new Date(s.date).toLocaleString('it-IT', { month: 'long', year: 'numeric' });
-                if(!months[m]) months[m] = { l: 0, p: 0 };
-                months[m].l += s.lordo;
-                months[m].p += s.profit;
-            });
-            
-            let html = "";
-            for(let m in months) {
-                html += `<div class="rank-item">
-                    <span style="text-transform:capitalize">${m}</span>
-                    <span style="color:var(--green)">+${months[m].p}€</span>
-                </div>`;
-            }
-            document.getElementById('monthlySummary').innerHTML = html || "Nessun dato";
-        }
-
-        function clearData() { if(confirm("Vuoi cancellare tutto?")) { localStorage.clear(); location.reload(); } }
-        updateTotals();
     </script>
 </body>
 </html>
