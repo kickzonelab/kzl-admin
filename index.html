@@ -2,78 +2,87 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
     <link rel="apple-touch-icon" href="logo.png">
     <link rel="icon" type="image/png" href="logo.png">
-
-    <title>KZL ADMIN</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    
+    <title>KZL ADMIN PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #00e5ff; --bg: #000000; --card: #111111; --green: #00ff88; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; margin: 0; padding: 20px; -webkit-font-smoothing: antialiased; }
-        
+        :root { --accent: #00e5ff; --accent-dark: #008fa0; --bg: #000000; --card: #111; --text: #fff; --green: #00ff88; --shadow: 0 10px 30px rgba(0,0,0,0.7); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 50px; font-weight: 300; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeInUp 0.5s ease-out forwards; }
+
         /* Header */
-        .header { text-align: center; margin-top: 20px; margin-bottom: 30px; }
-        .logo-main { width: 85px; height: 85px; border-radius: 20px; border: 2px solid var(--accent); margin-bottom: 15px; object-fit: cover; }
-        h1 { font-family: 'Montserrat'; font-size: 22px; letter-spacing: 4px; margin: 0; }
+        .header { text-align: center; margin-top: 40px; margin-bottom: 30px; opacity: 0; animation: fadeInUp 0.5s ease-out 0.2s forwards; }
+        .logo-main { width: 90px; height: 90px; border-radius: 22px; border: 2px solid var(--accent); margin-bottom: 15px; box-shadow: 0 0 15px rgba(0,229,255,0.3); }
+        h1 { font-family: 'Montserrat'; font-size: 24px; letter-spacing: 5px; margin: 0; text-shadow: 0 0 5px rgba(255,255,255,0.3); }
 
         /* Dashboard */
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .card { background: var(--card); padding: 20px; border-radius: 24px; border: 1px solid #222; text-align: center; }
-        .stat-v { font-size: 24px; font-weight: 900; color: var(--accent); display: block; }
-        .stat-l { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; display: block; }
+        .dashboard { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 25px; opacity: 0; animation: fadeInUp 0.5s ease-out 0.4s forwards; }
+        .card-stat { background: var(--card); border: 1px solid #222; border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow); }
+        .stat-icon { font-size: 28px; color: #444; }
+        .stat-content { text-align: right; }
+        .stat-v { font-size: 32px; font-weight: 700; color: var(--accent); display: block; line-height: 1.1; }
+        .stat-l { font-size: 11px; color: #777; text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; display: block; font-weight: 500; }
 
-        /* Prodotti */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn { background: var(--card); border: 1px solid #282828; padding: 18px 10px; border-radius: 18px; color: white; text-align: center; position: relative; overflow: hidden; transition: 0.1s; }
-        .btn:active { background: #1a1a1a; transform: scale(0.96); border-color: var(--accent); }
-        .btn b { display: block; font-size: 14px; margin-bottom: 4px; }
-        .btn span { font-size: 11px; color: var(--green); font-weight: 600; }
+        /* Griglia Prodotti */
+        .grid-prod { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; opacity: 0; animation: fadeInUp 0.5s ease-out 0.6s forwards; }
+        .btn-prod { background: var(--card); border: 2px solid var(--accent-dark); padding: 18px 10px; border-radius: 18px; color: white; text-align: center; box-shadow: var(--shadow); cursor: pointer; transition: 0.1s; }
+        .btn-prod:active { transform: scale(0.96) translateY(2px); border-color: var(--accent); background: #080808; box-shadow: 0 0 10px rgba(0,229,255,0.2); }
+        .p-name { display: block; font-weight: 700; font-size: 14px; margin-bottom: 3px; letter-spacing: 0.5px; }
+        .p-profit { font-size: 11px; color: var(--green); font-weight: 500; }
 
-        /* Log */
-        #history { margin-top: 30px; background: var(--card); border-radius: 24px; padding: 20px; border: 1px solid #1a1a1a; }
-        .h-title { font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; text-align: left; }
-        .h-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #222; font-size: 13px; }
-        .h-item:last-child { border: none; }
-        .h-client { font-weight: 600; color: #eee; }
-        .h-profit { color: var(--green); font-weight: bold; }
+        /* Storico */
+        #history { background: rgba(17,17,17,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid #1a1a1a; border-radius: 24px; padding: 20px; box-shadow: var(--shadow); opacity: 0; animation: fadeInUp 0.5s ease-out 0.8s forwards; }
+        .h-title { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; font-weight: 500; }
+        .h-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #222; }
+        .h-item:last-child { border-bottom: none; }
+        .h-client-info { font-weight: 500; font-size: 13px; color: #ddd; line-height: 1.3; }
+        .h-client-info small { color: #888; font-size: 11px; font-weight: 300; }
+        .h-profit { color: var(--green); font-weight: 700; font-size: 14px; text-shadow: 0 0 3px rgba(0,255,136,0.3); }
+        .empty-log { text-align: center; color: #444; font-size: 12px; padding: 20px 0; }
     </style>
 </head>
-<body>
+<body class="fade-in">
 
     <div class="header">
-        <img src="logo.png" class="logo-main" alt="Logo" onerror="this.src='https://via.placeholder.com/85/000000/00e5ff?text=KZL'">
+        <img src="logo.png" class="logo-main" alt="Logo" onerror="this.src='https://via.placeholder.com/90/000000/00e5ff?text=KZL'">
         <h1>KICKZONELAB</h1>
     </div>
 
-    <div class="stats">
-        <div class="card">
-            <span class="stat-v" id="valLordo">€ 0</span>
-            <span class="stat-l">Vendite</span>
+    <div class="dashboard">
+        <div class="card-stat">
+            <span class="stat-icon">€</span>
+            <div class="stat-content">
+                <span class="stat-v" id="valLordo">0</span>
+                <span class="stat-l">Fatturato</span>
+            </div>
         </div>
-        <div class="card">
-            <span class="stat-v" id="valProfit" style="color: var(--green);">€ 0</span>
-            <span class="stat-l">Profitto</span>
+        <div class="card-stat" style="border-color: #00ff8844;">
+            <span class="stat-icon" style="color: var(--green);">📈</span>
+            <div class="stat-content">
+                <span class="stat-v" id="valProfit" style="color: var(--green);">0</span>
+                <span class="stat-l">Profitto</span>
+            </div>
         </div>
     </div>
 
-    <div class="h-title">Scegli Prodotto</div>
-    <div class="grid">
-        <div class="btn" onclick="addS('Jordan 4', 350, 110)"><b>Jordan 4</b><span>+€110 Profit</span></div>
-        <div class="btn" onclick="addS('McQueen', 130, 55)"><b>McQueen</b><span>+€55 Profit</span></div>
-        <div class="btn" onclick="addS('Dunk Low', 190, 70)"><b>Dunk Low</b><span>+€70 Profit</span></div>
-        <div class="btn" onclick="addS('Travis Scott', 1050, 320)"><b>Travis Scott</b><span>+€320 Profit</span></div>
-        <div class="btn" onclick="addS('Adidas Campus', 125, 45)"><b>Campus</b><span>+€45 Profit</span></div>
-        <div class="btn" onclick="addS('Yeezy 350', 260, 85)"><b>Yeezy 350</b><span>+€85 Profit</span></div>
+    <div class="grid-prod">
+        <div class="btn-prod" onclick="addS('Jordan 4', 350, 110)"><span class="p-name">Jordan 4</span><span class="p-profit">+€110</span></div>
+        <div class="btn-prod" onclick="addS('McQueen', 130, 55)"><span class="p-name">McQueen</span><span class="p-profit">+€55</span></div>
+        <div class="btn-prod" onclick="addS('Travis Scott', 1050, 320)"><span class="p-name">Travis Scott</span><span class="p-profit">+€320</span></div>
+        <div class="btn-prod" onclick="addS('Dunk Low', 190, 70)"><span class="p-name">Dunk Low</span><span class="p-profit">+€70</span></div>
+        <div class="btn-prod" onclick="addS('Adidas Campus', 125, 45)"><span class="p-name">Adidas Campus</span><span class="p-profit">+€45</span></div>
+        <div class="btn-prod" onclick="addS('Yeezy 350', 260, 85)"><span class="p-name">Yeezy 350</span><span class="p-profit">+€85</span></div>
     </div>
 
     <div id="history">
-        <div class="h-title">Ultime Transazioni</div>
-        <div id="log"><p style="color:#444; font-size:12px;">Nessuna vendita registrata</p></div>
+        <div class="h-title">Storico Vendite</div>
+        <div id="log"><p class="empty-log">Nessuna transazione registrata</p></div>
     </div>
 
     <script>
@@ -83,15 +92,15 @@
             if(!c) return;
 
             l += pr; p += pf;
-            document.getElementById('valLordo').innerText = "€ " + l;
-            document.getElementById('valProfit').innerText = "€ " + p;
+            document.getElementById('valLordo').innerText = l;
+            document.getElementById('valProfit').innerText = p;
 
             const log = document.getElementById('log');
-            if(log.innerHTML.includes("Nessuna")) log.innerHTML = "";
+            if(log.innerHTML.includes("Nessuna transazione")) log.innerHTML = "";
             
             const div = document.createElement('div');
             div.className = 'h-item';
-            div.innerHTML = `<span class="h-client">${c} <br><small style="color:#666; font-weight:400">${n}</small></span> <span class="h-profit">+€${pf}</span>`;
+            div.innerHTML = `<span class="h-client-info">${c}<br><small>${n}</small></span><span class="h-profit">+€${pf}</span>`;
             log.prepend(div);
         }
     </script>
