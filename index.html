@@ -36,13 +36,20 @@
         .page { display: none; }
         .active { display: block; }
 
-        /* GRIGLIA PRODOTTI CON FOTO */
+        /* GRIGLIA PRODOTTI */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn { background: var(--card); border: 1px solid #222; border-radius: 20px; text-align: center; overflow: hidden; padding-bottom: 10px; position: relative; }
+        .btn-wrap { position: relative; }
+        .btn { background: var(--card); border: 1px solid #222; border-radius: 20px; text-align: center; overflow: hidden; padding-bottom: 10px; width: 100%; }
         .btn img { width: 100%; height: 110px; object-fit: cover; margin-bottom: 8px; border-bottom: 1px solid #222; }
-        .btn b { display: block; font-size: 13px; margin: 0 5px; }
+        .btn b { display: block; font-size: 13px; margin: 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .btn span { font-size: 10px; color: var(--green); font-weight: bold; }
-        .btn:active { transform: scale(0.95); }
+        
+        /* TASTO MODIFICA PICCOLO */
+        .edit-badge { 
+            position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); 
+            border: 1px solid var(--accent); border-radius: 50%; width: 24px; height: 24px; 
+            display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 5;
+        }
 
         .btn.special { grid-column: span 2; background: #1a1a1a; border: 1px dashed var(--accent); padding: 20px; margin-top: 10px; }
 
@@ -76,33 +83,28 @@
     </div>
 
     <div class="side-menu" id="sideMenu">
-        <a href="#" class="menu-link" onclick="showP('home')">🏠 Catalogo & Vendita</a>
-        <a href="#" class="menu-link" onclick="showP('rank')">🏆 Articolo del Mese</a>
-        <a href="#" class="menu-link" onclick="showP('history')">📸 Storico Vendite</a>
+        <a href="#" class="menu-link" onclick="showP('home')">🏠 Catalogo</a>
+        <a href="#" class="menu-link" onclick="showP('rank')">🏆 Classifica</a>
+        <a href="#" class="menu-link" onclick="showP('history')">📸 Storico</a>
         <a href="#" class="menu-link" onclick="exportData()">📥 Esporta Excel</a>
     </div>
 
-    <!-- HOME CON GRIGLIA FOTOGRAFICA -->
     <div id="p-home" class="page active">
         <div class="grid" id="mainGrid"></div>
-        <div class="btn special" onclick="triggerNewProduct()"><b>➕ AGGIUNGI ARTICOLO CON FOTO</b><br><span style="color:var(--accent)">Salva nel catalogo</span></div>
+        <div class="btn special" onclick="editProduct(null)"><b>➕ AGGIUNGI ARTICOLO</b><br><span style="color:var(--accent)">Crea nuovo con foto</span></div>
     </div>
 
     <div id="p-rank" class="page"><div class="list-box" id="rankContent"></div></div>
     <div id="p-history" class="page"><div class="list-box" id="historyContent"></div></div>
 
     <script>
-        // Immagini placeholder per i default
         const pImg = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop";
         
-        let defaultProducts = [
+        let myProducts = JSON.parse(localStorage.getItem('kzl_inventory_v5')) || [
             { id: 1, name: 'Jordan 4', lordo: 350, profit: 100, img: pImg },
-            { id: 2, name: 'McQueen', lordo: 130, profit: 50, img: pImg },
-            { id: 3, name: 'Travis Scott', lordo: 1100, profit: 300, img: pImg }
+            { id: 2, name: 'McQueen', lordo: 130, profit: 50, img: pImg }
         ];
-
-        let myProducts = JSON.parse(localStorage.getItem('kzl_inventory_v4')) || defaultProducts;
-        let sales = JSON.parse(localStorage.getItem('kzl_sales_v4')) || [];
+        let sales = JSON.parse(localStorage.getItem('kzl_sales_v5')) || [];
         const GOAL = 1500;
 
         function toggleMenu() {
@@ -118,36 +120,53 @@
             if(id === 'history') updateHistory();
         }
 
-        // AGGIUNTA NUOVO PRODOTTO CON FOTO
-        function triggerNewProduct() {
-            let name = prompt("Nome Modello (es. Dunk Panda):");
+        // FUNZIONE UNICA PER AGGIUNGERE O MODIFICARE
+        function editProduct(id) {
+            let p = id ? myProducts.find(x => x.id === id) : { name: "", lordo: 0, profit: 0, img: pImg };
+            
+            let name = prompt("Nome Modello:", p.name);
             if(!name) return;
-            let lordo = parseFloat(prompt("Prezzo Vendita (€):", "0"));
-            let profit = parseFloat(prompt("Profitto (€):", "0"));
+            let lordo = parseFloat(prompt("Prezzo Vendita (€):", p.lordo));
+            let profit = parseFloat(prompt("Profitto (€):", p.profit));
 
-            let input = document.createElement('input');
-            input.type = 'file'; input.accept = 'image/*';
-            input.onchange = e => {
-                let r = new FileReader();
-                r.onload = () => {
-                    let newProd = { id: Date.now(), name, lordo, profit, img: r.result };
-                    myProducts.push(newProd);
-                    localStorage.setItem('kzl_inventory_v4', JSON.stringify(myProducts));
-                    renderButtons();
+            if(confirm("Vuoi cambiare/aggiungere la foto?")) {
+                let input = document.createElement('input');
+                input.type = 'file'; input.accept = 'image/*';
+                input.onchange = e => {
+                    let r = new FileReader();
+                    r.onload = () => {
+                        saveProduct(id, name, lordo, profit, r.result);
+                    };
+                    r.readAsDataURL(e.target.files[0]);
                 };
-                r.readAsDataURL(e.target.files[0]);
-            };
-            input.click();
+                input.click();
+            } else {
+                saveProduct(id, name, lordo, profit, p.img);
+            }
+        }
+
+        function saveProduct(id, name, lordo, profit, img) {
+            if(id) {
+                let index = myProducts.findIndex(x => x.id === id);
+                myProducts[index] = { id, name, lordo, profit, img };
+            } else {
+                myProducts.push({ id: Date.now(), name, lordo, profit, img });
+            }
+            localStorage.setItem('kzl_inventory_v5', JSON.stringify(myProducts));
+            renderButtons();
         }
 
         function renderButtons() {
             let html = "";
             myProducts.forEach(p => {
                 html += `
-                <div class="btn" onclick="registerSale('${p.name}', ${p.lordo}, ${p.profit}, '${p.img}')">
-                    <img src="${p.img}">
-                    <b>${p.name}</b>
-                    <span>+${p.profit}€</span>
+                <div class="btn-wrap">
+                    <div class="edit-badge" onclick="editProduct(${p.id})">✎</div>
+                    <div class="btn" onclick="registerSale('${p.name}', ${p.lordo}, ${p.profit}, '${p.img}')">
+                        <img src="${p.img}">
+                        <b>${p.name}</b>
+                        <span>+${p.profit}€</span>
+                    </div>
                 </div>`;
             });
             document.getElementById('mainGrid').innerHTML = html;
@@ -158,11 +177,9 @@
             if(!cl) return;
             let p = prompt("Conferma Profitto:", pDef);
             if(p === null) return;
-            
             sales.push({ shoe: name, cl, lordo: parseFloat(lordo), p: parseFloat(p), img, date: new Date().toISOString() });
-            localStorage.setItem('kzl_sales_v4', JSON.stringify(sales));
+            localStorage.setItem('kzl_sales_v5', JSON.stringify(sales));
             updateUI();
-            alert("Vendita registrata!");
         }
 
         function updateUI() {
@@ -181,32 +198,30 @@
             let counts = {};
             sales.forEach(s => counts[s.shoe] = (counts[s.shoe] || 0) + 1);
             let sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-            let html = "<h2 style='font-size:14px; margin-bottom:15px'>🏆 TOP MODELLI</h2>";
+            let html = "<h2>🏆 TOP MODELLI</h2>";
             sorted.forEach(item => {
-                html += `<div class="row"><span>${item[0]}</span><b>${item[1]} Volte</b></div>`;
+                html += `<div class="row"><span>${item[0]}</span><b>${item[1]}</b></div>`;
             });
-            document.getElementById('rankContent').innerHTML = html || "Nessuna vendita.";
+            document.getElementById('rankContent').innerHTML = html;
         }
 
         function updateHistory() {
-            let html = "<h2 style='font-size:14px; margin-bottom:15px'>📸 STORICO</h2>";
+            let html = "<h2>📸 STORICO</h2>";
             sales.slice().reverse().forEach(s => {
                 html += `<div class="row">
                     <img src="${s.img}">
-                    <div style="flex:1; margin-left:10px">
-                        <b>${s.cl}</b><br><span style="font-size:10px; color:#666">${s.shoe}</span>
-                    </div>
+                    <div style="flex:1; margin-left:10px"><b>${s.cl}</b><br><small>${s.shoe}</small></div>
                     <b style="color:var(--green)">+${s.p}€</b>
                 </div>`;
             });
-            document.getElementById('historyContent').innerHTML = html || "Storico vuoto.";
+            document.getElementById('historyContent').innerHTML = html;
         }
 
         function exportData() {
             let csv = "Data,Cliente,Scarpa,Profitto\n";
             sales.forEach(s => csv += `${new Date(s.date).toLocaleDateString()},${s.cl},${s.shoe},${s.p}\n`);
             let blob = new Blob([csv], { type: 'text/csv' });
-            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'KICKZONELAB_Report.csv'; a.click();
+            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Kzl_Report.csv'; a.click();
         }
 
         renderButtons();
