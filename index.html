@@ -40,14 +40,13 @@
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .btn { background: var(--card); border: 1px solid #222; padding: 22px 10px; border-radius: 22px; text-align: center; }
         .btn:active { transform: scale(0.95); border-color: var(--accent); }
-        .btn.special { grid-column: span 2; background: #1a1a1a; border: 1px dashed var(--accent); }
+        .btn.special { grid-column: span 2; background: #1a1a1a; border: 1px dashed var(--accent); margin-top: 10px; }
         .btn b { display: block; font-size: 14px; margin-bottom: 4px; }
         .btn span { font-size: 10px; color: var(--green); font-weight: bold; }
 
         .list-box { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid #222; }
         .row { border-bottom: 1px solid #222; padding: 12px 0; font-size: 14px; }
         .row img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-top: 10px; display: block; }
-        .winner { color: gold; font-weight: bold; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; z-index: 999; }
     </style>
@@ -82,27 +81,25 @@
     </div>
 
     <div id="p-home" class="page active">
-        <div class="grid">
-            <div class="btn" onclick="addS('Jordan 4', 350, 100)"><b>Jordan 4</b><span>+100€</span></div>
-            <div class="btn" onclick="addS('McQueen', 130, 50)"><b>McQueen</b><span>+50€</span></div>
-            <div class="btn" onclick="addS('Travis Scott', 1100, 300)"><b>Travis Scott</b><span>+300€</span></div>
-            <div class="btn" onclick="addS('Dunk Low', 180, 60)"><b>Dunk Low</b><span>+60€</span></div>
-            <div class="btn special" onclick="addCustom()"><b>➕ AGGIUNGI ALTRO</b><span style="color:var(--accent)">Prodotto Personalizzato</span></div>
-        </div>
+        <!-- Qui appariranno i bottoni -->
+        <div class="grid" id="mainGrid"></div>
+        <div class="btn special" onclick="createNewProduct()"><b>➕ AGGIUNGI NUOVO ARTICOLO</b><span style="color:var(--accent)">Salva in lista</span></div>
     </div>
 
-    <div id="p-rank" class="page">
-        <h2 style="font-size:12px; color:#555; margin-bottom:15px;">🏆 CLASSIFICA</h2>
-        <div class="list-box" id="rankContent"></div>
-    </div>
-
-    <div id="p-history" class="page">
-        <h2 style="font-size:12px; color:#555; margin-bottom:15px;">📸 ARCHIVIO STORICO</h2>
-        <div class="list-box" id="historyContent"></div>
-    </div>
+    <div id="p-rank" class="page"><div class="list-box" id="rankContent"></div></div>
+    <div id="p-history" class="page"><div class="list-box" id="historyContent"></div></div>
 
     <script>
-        let sales = JSON.parse(localStorage.getItem('kzl_data_v2')) || [];
+        // Database Prodotti (quelli fissi)
+        let defaultProducts = [
+            { id: 1, name: 'Jordan 4', lordo: 350, profit: 100 },
+            { id: 2, name: 'McQueen', lordo: 130, profit: 50 },
+            { id: 3, name: 'Travis Scott', lordo: 1100, profit: 300 },
+            { id: 4, name: 'Dunk Low', lordo: 180, profit: 60 }
+        ];
+
+        let myProducts = JSON.parse(localStorage.getItem('kzl_inventory')) || defaultProducts;
+        let sales = JSON.parse(localStorage.getItem('kzl_sales_v3')) || [];
         const GOAL = 1500;
 
         function toggleMenu() {
@@ -118,47 +115,72 @@
             if(id === 'history') updateHistory();
         }
 
-        function addS(shoe, lordo, pDef, img = null) {
-            let cl = prompt("Nome Cliente:");
+        // Funzione per creare un nuovo bottone fisso
+        function createNewProduct() {
+            let name = prompt("Nome della scarpa/articolo:");
+            if(!name) return;
+            let lordo = parseFloat(prompt("Prezzo di vendita standard (Lordo):", "0"));
+            let profit = parseFloat(prompt("Profitto standard:", "0"));
+
+            let newProd = { id: Date.now(), name, lordo, profit };
+            myProducts.push(newProd);
+            localStorage.setItem('kzl_inventory', JSON.stringify(myProducts));
+            renderButtons();
+        }
+
+        // Disegna i bottoni nella griglia
+        function renderButtons() {
+            let html = "";
+            myProducts.forEach(p => {
+                html += `
+                <div class="btn" onclick="registerSale('${p.name}', ${p.lordo}, ${p.profit})">
+                    <b>${p.name}</b>
+                    <span>+${p.profit}€</span>
+                </div>`;
+            });
+            document.getElementById('mainGrid').innerHTML = html;
+        }
+
+        // Registra la vendita (quando clicchi un bottone)
+        function registerSale(name, lordo, pDef) {
+            let cl = prompt("Cliente per " + name + ":");
             if(!cl) return;
-            let p = prompt("Profitto:", pDef);
+            let p = prompt("Conferma Profitto:", pDef);
             if(p === null) return;
-            sales.push({ shoe, cl, lordo, p: parseFloat(p), img, date: new Date().toISOString() });
-            save();
+            
+            // Opzione foto solo alla registrazione vendita
+            if(confirm("Vuoi scattare una foto per l'archivio?")) {
+                let input = document.createElement('input');
+                input.type = 'file'; input.accept = 'image/*';
+                input.onchange = e => {
+                    let r = new FileReader();
+                    r.onload = () => finishSale(name, cl, lordo, p, r.result);
+                    r.readAsDataURL(e.target.files[0]);
+                };
+                input.click();
+            } else {
+                finishSale(name, cl, lordo, p, null);
+            }
+        }
+
+        function finishSale(shoe, cl, lordo, p, img) {
+            sales.push({ shoe, cl, lordo: parseFloat(lordo), p: parseFloat(p), img, date: new Date().toISOString() });
+            localStorage.setItem('kzl_sales_v3', JSON.stringify(sales));
             updateUI();
         }
 
-        function addCustom() {
-            let name = prompt("Nome Prodotto:");
-            if(!name) return;
-            let lordo = parseFloat(prompt("Prezzo Lordo:", "0"));
-            let profit = parseFloat(prompt("Profitto:", "0"));
-            
-            let input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = e => {
-                let reader = new FileReader();
-                reader.onload = () => addS(name, lordo, profit, reader.result);
-                reader.readAsDataURL(e.target.files[0]);
-            };
-            input.click();
-        }
-
-        function save() { localStorage.setItem('kzl_data_v2', JSON.stringify(sales)); }
-
         function updateUI() {
-            let totalL = sales.reduce((a, b) => a + b.lordo, 0);
-            let totalP = sales.reduce((a, b) => a + b.p, 0);
-            document.getElementById('tLordo').innerText = totalL + "€";
-            document.getElementById('tProfit').innerText = totalP + "€";
-            let percent = Math.min((totalP / GOAL) * 100, 100);
+            let tL = sales.reduce((a, b) => a + b.lordo, 0);
+            let tP = sales.reduce((a, b) => a + b.p, 0);
+            document.getElementById('tLordo').innerText = tL + "€";
+            document.getElementById('tProfit').innerText = tP + "€";
+            let percent = Math.min((tP / GOAL) * 100, 100);
             document.getElementById('goalBar').style.width = percent + "%";
             document.getElementById('goalPercent').innerText = Math.round(percent) + "%";
             
             let badge = "RESELLER JUNIOR";
-            if(totalP > 500) badge = "PLUG ESPERTO";
-            if(totalP >= 1500) badge = "KING OF THE LAB 👑";
+            if(tP > 500) badge = "PLUG ESPERTO";
+            if(tP >= 1500) badge = "KING OF THE LAB 👑";
             document.getElementById('userBadge').innerText = badge;
         }
 
@@ -166,23 +188,22 @@
             let counts = {};
             sales.forEach(s => counts[s.shoe] = (counts[s.shoe] || 0) + 1);
             let sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-            let html = "";
+            let html = "<h2>🏆 TOP VENDITE</h2>";
             sorted.forEach((item, i) => {
-                html += `<div class="row ${i===0?'winner':''}"><span>${item[0]}</span><b>${item[1]} Paia</b></div>`;
+                html += `<div class="row"><span>${item[0]}</span><b>${item[1]} Paia</b></div>`;
             });
-            document.getElementById('rankContent').innerHTML = html || "Vuoto";
+            document.getElementById('rankContent').innerHTML = html;
         }
 
         function updateHistory() {
-            let html = "";
+            let html = "<h2>📸 ARCHIVIO</h2>";
             sales.slice().reverse().forEach(s => {
                 html += `<div class="row">
                     <div style="display:flex; justify-content:space-between"><b>${s.cl}</b><span>${s.shoe}</span></div>
-                    <div style="color:var(--green); font-size:12px">+${s.p}€</div>
                     ${s.img ? `<img src="${s.img}">` : ''}
                 </div>`;
             });
-            document.getElementById('historyContent').innerHTML = html || "Nessuna foto.";
+            document.getElementById('historyContent').innerHTML = html;
         }
 
         function exportData() {
@@ -195,6 +216,7 @@
             a.click();
         }
 
+        renderButtons();
         updateUI();
     </script>
 </body>
