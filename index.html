@@ -14,38 +14,39 @@
         
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; padding: env(safe-area-inset-top) 15px 30px 15px; }
 
-        /* HEADER CON SCRITTA E MENU */
+        /* HEADER */
         .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 5px; position: relative; z-index: 1001; }
         .header h1 { font-family: 'Montserrat'; font-size: 18px; letter-spacing: 2px; color: white; }
         
-        /* TASTO 3 LINEETTE */
+        /* MENU LATERALE */
         .menu-btn { width: 30px; height: 20px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; }
         .menu-btn span { display: block; height: 3px; width: 100%; background: var(--accent); border-radius: 3px; }
-
-        /* MENU LATERALE A SCOMPARSA */
         .side-menu { position: fixed; top: 0; right: -100%; width: 70%; height: 100%; background: #111; z-index: 1000; padding: 80px 25px; transition: 0.4s; border-left: 1px solid #222; }
         .side-menu.open { right: 0; }
         .menu-link { display: block; color: white; font-size: 18px; font-weight: 600; margin-bottom: 25px; text-decoration: none; text-transform: uppercase; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; z-index: 999; }
 
-        /* DASHBOARD TOTALI */
-        .top-stats { display: flex; gap: 10px; margin-bottom: 25px; }
+        /* DASHBOARD */
+        .top-stats { display: flex; gap: 10px; margin-bottom: 15px; }
         .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 18px; padding: 12px; text-align: center; }
         .stat-box b { display: block; font-size: 18px; color: var(--accent); }
         .stat-box span { font-size: 8px; color: #666; text-transform: uppercase; }
 
-        /* PAGINE */
+        /* OBIETTIVO 1500€ */
+        .goal-container { background: #1a1a1a; border-radius: 10px; height: 24px; width: 100%; margin-bottom: 25px; position: relative; overflow: hidden; border: 1px solid #333; }
+        .goal-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--green)); transition: width 0.5s ease; }
+        .goal-text { position: absolute; width: 100%; text-align: center; font-size: 9px; font-weight: 700; line-height: 22px; text-transform: uppercase; letter-spacing: 1px; color: white; mix-blend-mode: difference; }
+
+        /* GRID */
         .page { display: none; }
         .active { display: block; }
-
-        /* GRIGLIA PRODOTTI */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn { background: var(--card); border: 1px solid #222; padding: 22px 10px; border-radius: 22px; text-align: center; position: relative; }
+        .btn { background: var(--card); border: 1px solid #222; padding: 22px 10px; border-radius: 22px; text-align: center; transition: 0.2s; }
         .btn:active { background: #1a1a1a; border-color: var(--accent); transform: scale(0.96); }
         .btn b { display: block; font-size: 14px; margin-bottom: 4px; }
         .btn span { font-size: 10px; color: var(--green); font-weight: bold; }
 
-        /* CLASSIFICA E MESI */
+        /* LISTE */
         .list-box { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid #222; }
         .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #222; font-size: 14px; }
     </style>
@@ -62,8 +63,14 @@
     </div>
 
     <div class="top-stats">
-        <div class="stat-box"><b id="tLordo">0€</b><span>Lordo Totale</span></div>
-        <div class="stat-box"><b id="tProfit" style="color:var(--green)">0€</b><span>Profitto Totale</span></div>
+        <div class="stat-box"><b id="tLordo">0€</b><span>Lordo</span></div>
+        <div class="stat-box"><b id="tProfit" style="color:var(--green)">0€</b><span>Profitto</span></div>
+    </div>
+
+    <!-- LINEA OBIETTIVO -->
+    <div class="goal-container">
+        <div class="goal-bar" id="goalBar"></div>
+        <div class="goal-text">Obiettivo 1500€: <span id="goalPercent">0%</span></div>
     </div>
 
     <div class="side-menu" id="sideMenu">
@@ -84,18 +91,19 @@
     </div>
 
     <div id="p-rank" class="page">
-        <h2 style="font-size:12px; color:#555; margin-bottom:15px;">ARTICOLI PIÙ VENDUTI</h2>
+        <h2 style="font-size:12px; color:#555; margin-bottom:15px;">TOP ARTICOLI</h2>
         <div class="list-box" id="rankContent"></div>
     </div>
 
     <div id="p-months" class="page">
-        <h2 style="font-size:12px; color:#555; margin-bottom:15px;">ANDAMENTO MENSILE</h2>
+        <h2 style="font-size:12px; color:#555; margin-bottom:15px;">RIASSUNTO MENSILE</h2>
         <div class="list-box" id="monthContent"></div>
     </div>
 
     <script>
         let sales = [];
         let counts = {};
+        const GOAL = 1500;
 
         function toggleMenu() {
             document.getElementById('sideMenu').classList.toggle('open');
@@ -126,8 +134,15 @@
         function updateTotals() {
             let totalL = sales.reduce((a, b) => a + b.lordo, 0);
             let totalP = sales.reduce((a, b) => a + b.p, 0);
+            
             document.getElementById('tLordo').innerText = totalL + "€";
             document.getElementById('tProfit').innerText = totalP + "€";
+
+            // AGGIORNA LA LINEA OBIETTIVO
+            let percent = (totalP / GOAL) * 100;
+            if (percent > 100) percent = 100;
+            document.getElementById('goalBar').style.width = percent + "%";
+            document.getElementById('goalPercent').innerText = Math.round(percent) + "%";
         }
 
         function updateRank() {
