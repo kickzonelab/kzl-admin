@@ -36,26 +36,25 @@
         .page { display: none; }
         .active { display: block; }
 
-        /* GRIGLIA PRODOTTI */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .btn-wrap { position: relative; }
-        .btn { background: var(--card); border: 1px solid #222; border-radius: 20px; text-align: center; overflow: hidden; padding-bottom: 10px; width: 100%; }
-        .btn img { width: 100%; height: 110px; object-fit: cover; margin-bottom: 8px; border-bottom: 1px solid #222; }
+        .btn { background: var(--card); border: 1px solid #222; border-radius: 20px; text-align: center; overflow: hidden; padding-bottom: 10px; width: 100%; min-height: 160px; }
+        .btn img { width: 100%; height: 110px; object-fit: cover; margin-bottom: 8px; border-bottom: 1px solid #222; background: #222; }
         .btn b { display: block; font-size: 13px; margin: 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .btn span { font-size: 10px; color: var(--green); font-weight: bold; }
         
-        /* TASTO MODIFICA PICCOLO */
         .edit-badge { 
-            position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); 
-            border: 1px solid var(--accent); border-radius: 50%; width: 24px; height: 24px; 
-            display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 5;
+            position: absolute; top: 8px; right: 8px; background: var(--accent); 
+            color: #000; border-radius: 50%; width: 28px; height: 28px; 
+            display: flex; align-items: center; justify-content: center; font-size: 14px; z-index: 10; font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        .btn.special { grid-column: span 2; background: #1a1a1a; border: 1px dashed var(--accent); padding: 20px; margin-top: 10px; }
+        .btn.special { grid-column: span 2; background: #1a1a1a; border: 1px dashed var(--accent); padding: 25px; margin-top: 15px; border-radius: 20px; }
 
         .list-box { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid #222; }
         .row { border-bottom: 1px solid #222; padding: 12px 0; font-size: 14px; display: flex; align-items: center; justify-content: space-between; }
-        .row img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+        .row img { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; background: #222; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; z-index: 999; }
     </style>
@@ -91,20 +90,24 @@
 
     <div id="p-home" class="page active">
         <div class="grid" id="mainGrid"></div>
-        <div class="btn special" onclick="editProduct(null)"><b>➕ AGGIUNGI ARTICOLO</b><br><span style="color:var(--accent)">Crea nuovo con foto</span></div>
+        <div class="btn special" onclick="editProduct(null)">
+            <b>➕ AGGIUNGI NUOVO ARTICOLO</b><br>
+            <span style="color:var(--accent)">Salva stabilmente in Home</span>
+        </div>
     </div>
 
     <div id="p-rank" class="page"><div class="list-box" id="rankContent"></div></div>
     <div id="p-history" class="page"><div class="list-box" id="historyContent"></div></div>
 
     <script>
-        const pImg = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop";
+        // Database iniziale
+        const placeholder = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop";
         
-        let myProducts = JSON.parse(localStorage.getItem('kzl_inventory_v5')) || [
-            { id: 1, name: 'Jordan 4', lordo: 350, profit: 100, img: pImg },
-            { id: 2, name: 'McQueen', lordo: 130, profit: 50, img: pImg }
+        let myProducts = JSON.parse(localStorage.getItem('kzl_inventory_v6')) || [
+            { id: 1, name: 'Jordan 4', lordo: 350, profit: 100, img: placeholder },
+            { id: 2, name: 'McQueen', lordo: 130, profit: 50, img: placeholder }
         ];
-        let sales = JSON.parse(localStorage.getItem('kzl_sales_v5')) || [];
+        let sales = JSON.parse(localStorage.getItem('kzl_sales_v6')) || [];
         const GOAL = 1500;
 
         function toggleMenu() {
@@ -115,33 +118,34 @@
         function showP(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('p-' + id).classList.add('active');
-            toggleMenu();
+            if(document.getElementById('sideMenu').classList.contains('open')) toggleMenu();
             if(id === 'rank') updateRank();
             if(id === 'history') updateHistory();
         }
 
-        // FUNZIONE UNICA PER AGGIUNGERE O MODIFICARE
         function editProduct(id) {
-            let p = id ? myProducts.find(x => x.id === id) : { name: "", lordo: 0, profit: 0, img: pImg };
+            let p = id ? myProducts.find(x => x.id === id) : { name: "", lordo: 0, profit: 0, img: placeholder };
             
             let name = prompt("Nome Modello:", p.name);
             if(!name) return;
-            let lordo = parseFloat(prompt("Prezzo Vendita (€):", p.lordo));
-            let profit = parseFloat(prompt("Profitto (€):", p.profit));
+            let lordo = prompt("Prezzo Vendita (€):", p.lordo);
+            let profit = prompt("Profitto (€):", p.profit);
 
-            if(confirm("Vuoi cambiare/aggiungere la foto?")) {
+            if(confirm("Vuoi scattare o scegliere una foto?")) {
                 let input = document.createElement('input');
-                input.type = 'file'; input.accept = 'image/*';
+                input.type = 'file'; 
+                input.accept = 'image/*';
                 input.onchange = e => {
+                    let file = e.target.files[0];
                     let r = new FileReader();
                     r.onload = () => {
-                        saveProduct(id, name, lordo, profit, r.result);
+                        saveProduct(id, name, parseFloat(lordo), parseFloat(profit), r.result);
                     };
-                    r.readAsDataURL(e.target.files[0]);
+                    r.readAsDataURL(file);
                 };
                 input.click();
             } else {
-                saveProduct(id, name, lordo, profit, p.img);
+                saveProduct(id, name, parseFloat(lordo), parseFloat(profit), p.img);
             }
         }
 
@@ -152,7 +156,7 @@
             } else {
                 myProducts.push({ id: Date.now(), name, lordo, profit, img });
             }
-            localStorage.setItem('kzl_inventory_v5', JSON.stringify(myProducts));
+            localStorage.setItem('kzl_inventory_v6', JSON.stringify(myProducts));
             renderButtons();
         }
 
@@ -162,7 +166,7 @@
                 html += `
                 <div class="btn-wrap">
                     <div class="edit-badge" onclick="editProduct(${p.id})">✎</div>
-                    <div class="btn" onclick="registerSale('${p.name}', ${p.lordo}, ${p.profit}, '${p.img}')">
+                    <div class="btn" onclick="registerSale('${p.name.replace(/'/g, "\\'")}', ${p.lordo}, ${p.profit}, '${p.img}')">
                         <img src="${p.img}">
                         <b>${p.name}</b>
                         <span>+${p.profit}€</span>
@@ -177,8 +181,9 @@
             if(!cl) return;
             let p = prompt("Conferma Profitto:", pDef);
             if(p === null) return;
+            
             sales.push({ shoe: name, cl, lordo: parseFloat(lordo), p: parseFloat(p), img, date: new Date().toISOString() });
-            localStorage.setItem('kzl_sales_v5', JSON.stringify(sales));
+            localStorage.setItem('kzl_sales_v6', JSON.stringify(sales));
             updateUI();
         }
 
@@ -198,23 +203,23 @@
             let counts = {};
             sales.forEach(s => counts[s.shoe] = (counts[s.shoe] || 0) + 1);
             let sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-            let html = "<h2>🏆 TOP MODELLI</h2>";
+            let html = "<h2 style='font-size:14px; margin-bottom:15px'>🏆 TOP MODELLI</h2>";
             sorted.forEach(item => {
                 html += `<div class="row"><span>${item[0]}</span><b>${item[1]}</b></div>`;
             });
-            document.getElementById('rankContent').innerHTML = html;
+            document.getElementById('rankContent').innerHTML = html || "Nessuna vendita.";
         }
 
         function updateHistory() {
-            let html = "<h2>📸 STORICO</h2>";
+            let html = "<h2 style='font-size:14px; margin-bottom:15px'>📸 STORICO</h2>";
             sales.slice().reverse().forEach(s => {
                 html += `<div class="row">
                     <img src="${s.img}">
-                    <div style="flex:1; margin-left:10px"><b>${s.cl}</b><br><small>${s.shoe}</small></div>
+                    <div style="flex:1; margin-left:15px"><b>${s.cl}</b><br><small>${s.shoe}</small></div>
                     <b style="color:var(--green)">+${s.p}€</b>
                 </div>`;
             });
-            document.getElementById('historyContent').innerHTML = html;
+            document.getElementById('historyContent').innerHTML = html || "Storico vuoto.";
         }
 
         function exportData() {
@@ -224,6 +229,7 @@
             let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Kzl_Report.csv'; a.click();
         }
 
+        // Caricamento iniziale
         renderButtons();
         updateUI();
     </script>
