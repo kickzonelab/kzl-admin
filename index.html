@@ -4,169 +4,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>KICKZONELAB ADMIN</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #00e5ff; --bg: #000; --card: #121212; --green: #00ff88; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; padding: env(safe-area-inset-top) 15px 30px 15px; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; padding: 20px 15px; }
 
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 5px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .header h1 { font-family: 'Montserrat'; font-size: 18px; letter-spacing: 2px; }
-        
-        .menu-btn { width: 30px; height: 20px; display: flex; flex-direction: column; justify-content: space-between; z-index: 1001; }
-        .menu-btn span { display: block; height: 3px; width: 100%; background: var(--accent); border-radius: 3px; }
-
-        .side-menu { position: fixed; top: 0; right: -100%; width: 75%; height: 100%; background: #111; z-index: 1000; padding: 80px 25px; transition: 0.4s; border-left: 1px solid #222; }
-        .side-menu.open { right: 0; }
-        .menu-link { display: block; color: white; font-size: 16px; margin-bottom: 25px; text-decoration: none; text-transform: uppercase; font-weight: 600; }
-
-        .status-area { text-align: center; margin-bottom: 20px; }
-        #userBadge { font-size: 10px; font-weight: 800; padding: 4px 12px; border-radius: 50px; background: #111; color: var(--accent); border: 1px solid var(--accent); text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
-        
-        .goal-container { background: #1a1a1a; border-radius: 10px; height: 22px; width: 100%; position: relative; overflow: hidden; border: 1px solid #333; }
-        .goal-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--green)); transition: 1s ease; }
-        .goal-text { position: absolute; width: 100%; text-align: center; font-size: 9px; font-weight: 700; line-height: 20px; color: white; mix-blend-mode: difference; }
 
         .top-stats { display: flex; gap: 10px; margin-bottom: 20px; }
-        .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 18px; padding: 12px; text-align: center; }
+        .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 15px; padding: 12px; text-align: center; }
         .stat-box b { display: block; font-size: 18px; color: var(--accent); }
+        .stat-box span { font-size: 9px; color: #666; }
 
-        .page { display: none; }
-        .active { display: block; }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
         .btn-wrap { position: relative; }
-        .btn { background: var(--card); border: 1px solid #222; border-radius: 20px; text-align: center; overflow: hidden; padding-bottom: 10px; width: 100%; min-height: 160px; }
-        .btn img { width: 100%; height: 110px; object-fit: cover; margin-bottom: 8px; border-bottom: 1px solid #222; background: #222; }
-        .btn b { display: block; font-size: 13px; margin: 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .btn { background: var(--card); border: 1px solid #222; border-radius: 15px; text-align: center; overflow: hidden; padding-bottom: 10px; width: 100%; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
+        .btn img { width: 100%; height: 100px; object-fit: cover; border-bottom: 1px solid #222; background: #1a1a1a; }
+        .btn b { display: block; font-size: 12px; padding: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .btn span { font-size: 10px; color: var(--green); font-weight: bold; }
         
         .edit-badge { 
-            position: absolute; top: 8px; right: 8px; background: var(--accent); 
-            color: #000; border-radius: 50%; width: 28px; height: 28px; 
-            display: flex; align-items: center; justify-content: center; font-size: 14px; z-index: 10; font-weight: bold;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            position: absolute; top: 5px; right: 5px; background: var(--accent); color: #000; 
+            border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; 
+            justify-content: center; font-size: 12px; z-index: 10; font-weight: bold;
         }
 
-        .btn.special { grid-column: span 2; background: #1a1a1a; border: 1px dashed var(--accent); padding: 25px; margin-top: 15px; border-radius: 20px; }
+        .btn.special { grid-column: span 2; background: #111; border: 1px dashed var(--accent); padding: 20px; margin-top: 10px; border-radius: 15px; }
+        
+        .page { display: none; }
+        .active { display: block; }
 
-        .list-box { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid #222; }
-        .row { border-bottom: 1px solid #222; padding: 12px 0; font-size: 14px; display: flex; align-items: center; justify-content: space-between; }
-        .row img { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; background: #222; }
-
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; z-index: 999; }
+        #menu { position: fixed; bottom: 0; left: 0; width: 100%; background: #080808; display: flex; justify-content: space-around; padding: 10px; border-top: 1px solid #222; z-index: 100; }
+        .menu-item { font-size: 10px; color: #666; text-decoration: none; text-align: center; }
+        .menu-item.active-link { color: var(--accent); }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
     <div class="header">
         <h1>KICKZONELAB</h1>
-        <div class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
-    </div>
-
-    <div class="status-area">
-        <span id="userBadge">RESELLER JUNIOR</span>
-        <div class="goal-container">
-            <div class="goal-bar" id="goalBar"></div>
-            <div class="goal-text">Obiettivo 1500€: <span id="goalPercent">0%</span></div>
-        </div>
+        <div style="color: var(--accent); font-size: 10px;" onclick="location.reload()">REFRESH ↻</div>
     </div>
 
     <div class="top-stats">
-        <div class="stat-box"><b id="tLordo">0€</b><span style="font-size:8px; color:#666;">LORDO</span></div>
-        <div class="stat-box"><b id="tProfit" style="color:var(--green)">0€</b><span style="font-size:8px; color:#666;">PROFITTO</span></div>
-    </div>
-
-    <div class="side-menu" id="sideMenu">
-        <a href="#" class="menu-link" onclick="showP('home')">🏠 Catalogo</a>
-        <a href="#" class="menu-link" onclick="showP('rank')">🏆 Classifica</a>
-        <a href="#" class="menu-link" onclick="showP('history')">📸 Storico</a>
-        <a href="#" class="menu-link" onclick="exportData()">📥 Esporta Excel</a>
+        <div class="stat-box"><b id="tLordo">0€</b><span>LORDO</span></div>
+        <div class="stat-box"><b id="tProfit" style="color:var(--green)">0€</b><span>PROFITTO</span></div>
     </div>
 
     <div id="p-home" class="page active">
         <div class="grid" id="mainGrid"></div>
         <div class="btn special" onclick="editProduct(null)">
-            <b>➕ AGGIUNGI NUOVO ARTICOLO</b><br>
-            <span style="color:var(--accent)">Salva stabilmente in Home</span>
+            <b>➕ AGGIUNGI ARTICOLO</b><br>
+            <small style="color:var(--accent); font-size: 9px;">Verrà salvato qui in Home</small>
         </div>
     </div>
 
-    <div id="p-rank" class="page"><div class="list-box" id="rankContent"></div></div>
-    <div id="p-history" class="page"><div class="list-box" id="historyContent"></div></div>
+    <div id="p-history" class="page">
+        <h2 style="font-size: 14px; margin-bottom: 10px;">STORICO VENDITE</h2>
+        <div id="historyContent"></div>
+    </div>
+
+    <div id="menu">
+        <a href="#" class="menu-item active-link" id="l-home" onclick="showP('home')">HOME</a>
+        <a href="#" class="menu-item" id="l-history" onclick="showP('history')">STORICO</a>
+        <a href="#" class="menu-item" onclick="localStorage.clear(); location.reload();" style="color: red;">RESET</a>
+    </div>
 
     <script>
-        // Database iniziale
-        const placeholder = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop";
-        
-        let myProducts = JSON.parse(localStorage.getItem('kzl_inventory_v6')) || [
-            { id: 1, name: 'Jordan 4', lordo: 350, profit: 100, img: placeholder },
-            { id: 2, name: 'McQueen', lordo: 130, profit: 50, img: placeholder }
-        ];
-        let sales = JSON.parse(localStorage.getItem('kzl_sales_v6')) || [];
-        const GOAL = 1500;
+        // Database unificato per evitare perdite
+        const DB_KEY = 'KICKZONE_DATA_FINAL';
+        const IMG_DEFAULT = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop";
 
-        function toggleMenu() {
-            document.getElementById('sideMenu').classList.toggle('open');
-            document.getElementById('overlay').style.display = document.getElementById('sideMenu').classList.contains('open') ? 'block' : 'none';
-        }
+        let storage = JSON.parse(localStorage.getItem(DB_KEY)) || {
+            products: [
+                { id: 1, name: 'Jordan 4', lordo: 350, profit: 100, img: IMG_DEFAULT },
+                { id: 2, name: 'McQueen', lordo: 130, profit: 50, img: IMG_DEFAULT }
+            ],
+            sales: []
+        };
 
         function showP(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active-link'));
             document.getElementById('p-' + id).classList.add('active');
-            if(document.getElementById('sideMenu').classList.contains('open')) toggleMenu();
-            if(id === 'rank') updateRank();
+            document.getElementById('l-' + id).classList.add('active-link');
             if(id === 'history') updateHistory();
         }
 
         function editProduct(id) {
-            let p = id ? myProducts.find(x => x.id === id) : { name: "", lordo: 0, profit: 0, img: placeholder };
+            let p = id ? storage.products.find(x => x.id === id) : { name: "", lordo: 0, profit: 0, img: IMG_DEFAULT };
             
             let name = prompt("Nome Modello:", p.name);
             if(!name) return;
             let lordo = prompt("Prezzo Vendita (€):", p.lordo);
             let profit = prompt("Profitto (€):", p.profit);
 
-            if(confirm("Vuoi scattare o scegliere una foto?")) {
+            if(confirm("Vuoi mettere una foto?")) {
                 let input = document.createElement('input');
-                input.type = 'file'; 
-                input.accept = 'image/*';
+                input.type = 'file'; input.accept = 'image/*';
                 input.onchange = e => {
-                    let file = e.target.files[0];
                     let r = new FileReader();
-                    r.onload = () => {
-                        saveProduct(id, name, parseFloat(lordo), parseFloat(profit), r.result);
-                    };
-                    r.readAsDataURL(file);
+                    r.onload = () => saveAndRender(id, name, lordo, profit, r.result);
+                    r.readAsDataURL(e.target.files[0]);
                 };
                 input.click();
             } else {
-                saveProduct(id, name, parseFloat(lordo), parseFloat(profit), p.img);
+                saveAndRender(id, name, lordo, profit, p.img);
             }
         }
 
-        function saveProduct(id, name, lordo, profit, img) {
+        function saveAndRender(id, name, lordo, profit, img) {
             if(id) {
-                let index = myProducts.findIndex(x => x.id === id);
-                myProducts[index] = { id, name, lordo, profit, img };
+                let index = storage.products.findIndex(x => x.id === id);
+                storage.products[index] = { id, name, lordo: parseFloat(lordo), profit: parseFloat(profit), img };
             } else {
-                myProducts.push({ id: Date.now(), name, lordo, profit, img });
+                storage.products.push({ id: Date.now(), name, lordo: parseFloat(lordo), profit: parseFloat(profit), img });
             }
-            localStorage.setItem('kzl_inventory_v6', JSON.stringify(myProducts));
-            renderButtons();
+            saveToDisk();
+            renderHome();
         }
 
-        function renderButtons() {
+        function saveToDisk() {
+            localStorage.setItem(DB_KEY, JSON.stringify(storage));
+        }
+
+        function renderHome() {
             let html = "";
-            myProducts.forEach(p => {
+            storage.products.forEach(p => {
                 html += `
                 <div class="btn-wrap">
                     <div class="edit-badge" onclick="editProduct(${p.id})">✎</div>
-                    <div class="btn" onclick="registerSale('${p.name.replace(/'/g, "\\'")}', ${p.lordo}, ${p.profit}, '${p.img}')">
+                    <div class="btn" onclick="registerSale(${p.id})">
                         <img src="${p.img}">
                         <b>${p.name}</b>
                         <span>+${p.profit}€</span>
@@ -174,64 +146,48 @@
                 </div>`;
             });
             document.getElementById('mainGrid').innerHTML = html;
-        }
-
-        function registerSale(name, lordo, pDef, img) {
-            let cl = prompt("Cliente per " + name + ":");
-            if(!cl) return;
-            let p = prompt("Conferma Profitto:", pDef);
-            if(p === null) return;
-            
-            sales.push({ shoe: name, cl, lordo: parseFloat(lordo), p: parseFloat(p), img, date: new Date().toISOString() });
-            localStorage.setItem('kzl_sales_v6', JSON.stringify(sales));
             updateUI();
         }
 
-        function updateUI() {
-            let tP = sales.reduce((a, b) => a + b.p, 0);
-            let tL = sales.reduce((a, b) => a + b.lordo, 0);
-            document.getElementById('tLordo').innerText = tL + "€";
-            document.getElementById('tProfit').innerText = tP + "€";
-            let percent = Math.min((tP / GOAL) * 100, 100);
-            document.getElementById('goalBar').style.width = percent + "%";
-            document.getElementById('goalPercent').innerText = Math.round(percent) + "%";
-            let badge = tP >= 1500 ? "KING OF THE LAB 👑" : (tP > 500 ? "PLUG ESPERTO" : "RESELLER JUNIOR");
-            document.getElementById('userBadge').innerText = badge;
+        function registerSale(prodId) {
+            let p = storage.products.find(x => x.id === prodId);
+            let cl = prompt("Nome Cliente per " + p.name + ":");
+            if(!cl) return;
+            
+            storage.sales.push({ 
+                name: p.name, 
+                cl: cl, 
+                p: p.profit, 
+                l: p.lordo,
+                img: p.img, 
+                date: new Date().toLocaleDateString() 
+            });
+            saveToDisk();
+            updateUI();
+            alert("Vendita salvata!");
         }
 
-        function updateRank() {
-            let counts = {};
-            sales.forEach(s => counts[s.shoe] = (counts[s.shoe] || 0) + 1);
-            let sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-            let html = "<h2 style='font-size:14px; margin-bottom:15px'>🏆 TOP MODELLI</h2>";
-            sorted.forEach(item => {
-                html += `<div class="row"><span>${item[0]}</span><b>${item[1]}</b></div>`;
-            });
-            document.getElementById('rankContent').innerHTML = html || "Nessuna vendita.";
+        function updateUI() {
+            let totalL = storage.sales.reduce((a, b) => a + b.l, 0);
+            let totalP = storage.sales.reduce((a, b) => a + b.p, 0);
+            document.getElementById('tLordo').innerText = totalL + "€";
+            document.getElementById('tProfit').innerText = totalP + "€";
         }
 
         function updateHistory() {
-            let html = "<h2 style='font-size:14px; margin-bottom:15px'>📸 STORICO</h2>";
-            sales.slice().reverse().forEach(s => {
-                html += `<div class="row">
-                    <img src="${s.img}">
-                    <div style="flex:1; margin-left:15px"><b>${s.cl}</b><br><small>${s.shoe}</small></div>
+            let html = "";
+            storage.sales.slice().reverse().forEach(s => {
+                html += `<div style="background:#121212; padding:10px; border-radius:10px; margin-bottom:10px; display:flex; align-items:center; border:1px solid #222;">
+                    <img src="${s.img}" style="width:40px; height:40px; border-radius:5px; object-fit:cover; margin-right:10px;">
+                    <div style="flex:1"><b>${s.cl}</b><br><small style="color:#666">${s.name} - ${s.date}</small></div>
                     <b style="color:var(--green)">+${s.p}€</b>
                 </div>`;
             });
-            document.getElementById('historyContent').innerHTML = html || "Storico vuoto.";
+            document.getElementById('historyContent').innerHTML = html || "Ancora nessuna vendita.";
         }
 
-        function exportData() {
-            let csv = "Data,Cliente,Scarpa,Profitto\n";
-            sales.forEach(s => csv += `${new Date(s.date).toLocaleDateString()},${s.cl},${s.shoe},${s.p}\n`);
-            let blob = new Blob([csv], { type: 'text/csv' });
-            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Kzl_Report.csv'; a.click();
-        }
-
-        // Caricamento iniziale
-        renderButtons();
-        updateUI();
+        // Avvio
+        renderHome();
     </script>
 </body>
 </html>
