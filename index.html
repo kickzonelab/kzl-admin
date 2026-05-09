@@ -32,21 +32,23 @@
         .top-stats { display: flex; gap: 10px; margin-bottom: 20px; }
         .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 18px; padding: 12px; text-align: center; }
         .stat-box b { display: block; font-size: 18px; color: var(--accent); }
-        .stat-box span { font-size: 8px; color: #666; text-transform: uppercase; }
 
         .page { display: none; }
         .active { display: block; }
 
+        /* GRIGLIA PRODOTTI CON FOTO */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn { background: var(--card); border: 1px solid #222; padding: 22px 10px; border-radius: 22px; text-align: center; }
-        .btn:active { transform: scale(0.95); border-color: var(--accent); }
-        .btn.special { grid-column: span 2; background: #1a1a1a; border: 1px dashed var(--accent); margin-top: 10px; }
-        .btn b { display: block; font-size: 14px; margin-bottom: 4px; }
+        .btn { background: var(--card); border: 1px solid #222; border-radius: 20px; text-align: center; overflow: hidden; padding-bottom: 10px; position: relative; }
+        .btn img { width: 100%; height: 110px; object-fit: cover; margin-bottom: 8px; border-bottom: 1px solid #222; }
+        .btn b { display: block; font-size: 13px; margin: 0 5px; }
         .btn span { font-size: 10px; color: var(--green); font-weight: bold; }
+        .btn:active { transform: scale(0.95); }
+
+        .btn.special { grid-column: span 2; background: #1a1a1a; border: 1px dashed var(--accent); padding: 20px; margin-top: 10px; }
 
         .list-box { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid #222; }
-        .row { border-bottom: 1px solid #222; padding: 12px 0; font-size: 14px; }
-        .row img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-top: 10px; display: block; }
+        .row { border-bottom: 1px solid #222; padding: 12px 0; font-size: 14px; display: flex; align-items: center; justify-content: space-between; }
+        .row img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; z-index: 999; }
     </style>
@@ -69,37 +71,38 @@
     </div>
 
     <div class="top-stats">
-        <div class="stat-box"><b id="tLordo">0€</b><span>Lordo</span></div>
-        <div class="stat-box"><b id="tProfit" style="color:var(--green)">0€</b><span>Profitto</span></div>
+        <div class="stat-box"><b id="tLordo">0€</b><span style="font-size:8px; color:#666;">LORDO</span></div>
+        <div class="stat-box"><b id="tProfit" style="color:var(--green)">0€</b><span style="font-size:8px; color:#666;">PROFITTO</span></div>
     </div>
 
     <div class="side-menu" id="sideMenu">
-        <a href="#" class="menu-link" onclick="showP('home')">🏠 Vendita</a>
+        <a href="#" class="menu-link" onclick="showP('home')">🏠 Catalogo & Vendita</a>
         <a href="#" class="menu-link" onclick="showP('rank')">🏆 Articolo del Mese</a>
-        <a href="#" class="menu-link" onclick="showP('history')">📸 Archivio Foto</a>
+        <a href="#" class="menu-link" onclick="showP('history')">📸 Storico Vendite</a>
         <a href="#" class="menu-link" onclick="exportData()">📥 Esporta Excel</a>
     </div>
 
+    <!-- HOME CON GRIGLIA FOTOGRAFICA -->
     <div id="p-home" class="page active">
-        <!-- Qui appariranno i bottoni -->
         <div class="grid" id="mainGrid"></div>
-        <div class="btn special" onclick="createNewProduct()"><b>➕ AGGIUNGI NUOVO ARTICOLO</b><span style="color:var(--accent)">Salva in lista</span></div>
+        <div class="btn special" onclick="triggerNewProduct()"><b>➕ AGGIUNGI ARTICOLO CON FOTO</b><br><span style="color:var(--accent)">Salva nel catalogo</span></div>
     </div>
 
     <div id="p-rank" class="page"><div class="list-box" id="rankContent"></div></div>
     <div id="p-history" class="page"><div class="list-box" id="historyContent"></div></div>
 
     <script>
-        // Database Prodotti (quelli fissi)
+        // Immagini placeholder per i default
+        const pImg = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop";
+        
         let defaultProducts = [
-            { id: 1, name: 'Jordan 4', lordo: 350, profit: 100 },
-            { id: 2, name: 'McQueen', lordo: 130, profit: 50 },
-            { id: 3, name: 'Travis Scott', lordo: 1100, profit: 300 },
-            { id: 4, name: 'Dunk Low', lordo: 180, profit: 60 }
+            { id: 1, name: 'Jordan 4', lordo: 350, profit: 100, img: pImg },
+            { id: 2, name: 'McQueen', lordo: 130, profit: 50, img: pImg },
+            { id: 3, name: 'Travis Scott', lordo: 1100, profit: 300, img: pImg }
         ];
 
-        let myProducts = JSON.parse(localStorage.getItem('kzl_inventory')) || defaultProducts;
-        let sales = JSON.parse(localStorage.getItem('kzl_sales_v3')) || [];
+        let myProducts = JSON.parse(localStorage.getItem('kzl_inventory_v4')) || defaultProducts;
+        let sales = JSON.parse(localStorage.getItem('kzl_sales_v4')) || [];
         const GOAL = 1500;
 
         function toggleMenu() {
@@ -115,25 +118,34 @@
             if(id === 'history') updateHistory();
         }
 
-        // Funzione per creare un nuovo bottone fisso
-        function createNewProduct() {
-            let name = prompt("Nome della scarpa/articolo:");
+        // AGGIUNTA NUOVO PRODOTTO CON FOTO
+        function triggerNewProduct() {
+            let name = prompt("Nome Modello (es. Dunk Panda):");
             if(!name) return;
-            let lordo = parseFloat(prompt("Prezzo di vendita standard (Lordo):", "0"));
-            let profit = parseFloat(prompt("Profitto standard:", "0"));
+            let lordo = parseFloat(prompt("Prezzo Vendita (€):", "0"));
+            let profit = parseFloat(prompt("Profitto (€):", "0"));
 
-            let newProd = { id: Date.now(), name, lordo, profit };
-            myProducts.push(newProd);
-            localStorage.setItem('kzl_inventory', JSON.stringify(myProducts));
-            renderButtons();
+            let input = document.createElement('input');
+            input.type = 'file'; input.accept = 'image/*';
+            input.onchange = e => {
+                let r = new FileReader();
+                r.onload = () => {
+                    let newProd = { id: Date.now(), name, lordo, profit, img: r.result };
+                    myProducts.push(newProd);
+                    localStorage.setItem('kzl_inventory_v4', JSON.stringify(myProducts));
+                    renderButtons();
+                };
+                r.readAsDataURL(e.target.files[0]);
+            };
+            input.click();
         }
 
-        // Disegna i bottoni nella griglia
         function renderButtons() {
             let html = "";
             myProducts.forEach(p => {
                 html += `
-                <div class="btn" onclick="registerSale('${p.name}', ${p.lordo}, ${p.profit})">
+                <div class="btn" onclick="registerSale('${p.name}', ${p.lordo}, ${p.profit}, '${p.img}')">
+                    <img src="${p.img}">
                     <b>${p.name}</b>
                     <span>+${p.profit}€</span>
                 </div>`;
@@ -141,46 +153,27 @@
             document.getElementById('mainGrid').innerHTML = html;
         }
 
-        // Registra la vendita (quando clicchi un bottone)
-        function registerSale(name, lordo, pDef) {
+        function registerSale(name, lordo, pDef, img) {
             let cl = prompt("Cliente per " + name + ":");
             if(!cl) return;
             let p = prompt("Conferma Profitto:", pDef);
             if(p === null) return;
             
-            // Opzione foto solo alla registrazione vendita
-            if(confirm("Vuoi scattare una foto per l'archivio?")) {
-                let input = document.createElement('input');
-                input.type = 'file'; input.accept = 'image/*';
-                input.onchange = e => {
-                    let r = new FileReader();
-                    r.onload = () => finishSale(name, cl, lordo, p, r.result);
-                    r.readAsDataURL(e.target.files[0]);
-                };
-                input.click();
-            } else {
-                finishSale(name, cl, lordo, p, null);
-            }
-        }
-
-        function finishSale(shoe, cl, lordo, p, img) {
-            sales.push({ shoe, cl, lordo: parseFloat(lordo), p: parseFloat(p), img, date: new Date().toISOString() });
-            localStorage.setItem('kzl_sales_v3', JSON.stringify(sales));
+            sales.push({ shoe: name, cl, lordo: parseFloat(lordo), p: parseFloat(p), img, date: new Date().toISOString() });
+            localStorage.setItem('kzl_sales_v4', JSON.stringify(sales));
             updateUI();
+            alert("Vendita registrata!");
         }
 
         function updateUI() {
-            let tL = sales.reduce((a, b) => a + b.lordo, 0);
             let tP = sales.reduce((a, b) => a + b.p, 0);
+            let tL = sales.reduce((a, b) => a + b.lordo, 0);
             document.getElementById('tLordo').innerText = tL + "€";
             document.getElementById('tProfit').innerText = tP + "€";
             let percent = Math.min((tP / GOAL) * 100, 100);
             document.getElementById('goalBar').style.width = percent + "%";
             document.getElementById('goalPercent').innerText = Math.round(percent) + "%";
-            
-            let badge = "RESELLER JUNIOR";
-            if(tP > 500) badge = "PLUG ESPERTO";
-            if(tP >= 1500) badge = "KING OF THE LAB 👑";
+            let badge = tP >= 1500 ? "KING OF THE LAB 👑" : (tP > 500 ? "PLUG ESPERTO" : "RESELLER JUNIOR");
             document.getElementById('userBadge').innerText = badge;
         }
 
@@ -188,32 +181,32 @@
             let counts = {};
             sales.forEach(s => counts[s.shoe] = (counts[s.shoe] || 0) + 1);
             let sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-            let html = "<h2>🏆 TOP VENDITE</h2>";
-            sorted.forEach((item, i) => {
-                html += `<div class="row"><span>${item[0]}</span><b>${item[1]} Paia</b></div>`;
+            let html = "<h2 style='font-size:14px; margin-bottom:15px'>🏆 TOP MODELLI</h2>";
+            sorted.forEach(item => {
+                html += `<div class="row"><span>${item[0]}</span><b>${item[1]} Volte</b></div>`;
             });
-            document.getElementById('rankContent').innerHTML = html;
+            document.getElementById('rankContent').innerHTML = html || "Nessuna vendita.";
         }
 
         function updateHistory() {
-            let html = "<h2>📸 ARCHIVIO</h2>";
+            let html = "<h2 style='font-size:14px; margin-bottom:15px'>📸 STORICO</h2>";
             sales.slice().reverse().forEach(s => {
                 html += `<div class="row">
-                    <div style="display:flex; justify-content:space-between"><b>${s.cl}</b><span>${s.shoe}</span></div>
-                    ${s.img ? `<img src="${s.img}">` : ''}
+                    <img src="${s.img}">
+                    <div style="flex:1; margin-left:10px">
+                        <b>${s.cl}</b><br><span style="font-size:10px; color:#666">${s.shoe}</span>
+                    </div>
+                    <b style="color:var(--green)">+${s.p}€</b>
                 </div>`;
             });
-            document.getElementById('historyContent').innerHTML = html;
+            document.getElementById('historyContent').innerHTML = html || "Storico vuoto.";
         }
 
         function exportData() {
             let csv = "Data,Cliente,Scarpa,Profitto\n";
             sales.forEach(s => csv += `${new Date(s.date).toLocaleDateString()},${s.cl},${s.shoe},${s.p}\n`);
             let blob = new Blob([csv], { type: 'text/csv' });
-            let a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'Kzl_Report.csv';
-            a.click();
+            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'KICKZONELAB_Report.csv'; a.click();
         }
 
         renderButtons();
