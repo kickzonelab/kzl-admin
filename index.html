@@ -5,50 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="logo.png">
-    <title>KICKZONELAB</title>
+    <title>KICKZONELAB ADMIN</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #00e5ff; --bg: #000; --card: #121212; --green: #00ff88; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; padding: env(safe-area-inset-top) 15px 30px 15px; }
 
-        /* HEADER */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 5px; position: relative; z-index: 1001; }
-        .header h1 { font-family: 'Montserrat'; font-size: 18px; letter-spacing: 2px; color: white; }
-        
-        /* MENU LATERALE */
-        .menu-btn { width: 30px; height: 20px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 5px; }
+        .header h1 { font-family: 'Montserrat'; font-size: 18px; letter-spacing: 2px; }
+
+        .menu-btn { width: 30px; height: 20px; display: flex; flex-direction: column; justify-content: space-between; z-index: 1001; }
         .menu-btn span { display: block; height: 3px; width: 100%; background: var(--accent); border-radius: 3px; }
-        .side-menu { position: fixed; top: 0; right: -100%; width: 70%; height: 100%; background: #111; z-index: 1000; padding: 80px 25px; transition: 0.4s; border-left: 1px solid #222; }
+
+        .side-menu { position: fixed; top: 0; right: -100%; width: 75%; height: 100%; background: #111; z-index: 1000; padding: 80px 25px; transition: 0.4s; border-left: 1px solid #222; }
         .side-menu.open { right: 0; }
-        .menu-link { display: block; color: white; font-size: 18px; font-weight: 600; margin-bottom: 25px; text-decoration: none; text-transform: uppercase; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; z-index: 999; }
+        .menu-link { display: block; color: white; font-size: 16px; margin-bottom: 25px; text-decoration: none; text-transform: uppercase; font-weight: 600; }
 
-        /* DASHBOARD */
-        .top-stats { display: flex; gap: 10px; margin-bottom: 15px; }
-        .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 18px; padding: 12px; text-align: center; }
-        .stat-box b { display: block; font-size: 18px; color: var(--accent); }
-        .stat-box span { font-size: 8px; color: #666; text-transform: uppercase; }
-
-        /* OBIETTIVO 1500€ */
-        .goal-container { background: #1a1a1a; border-radius: 10px; height: 24px; width: 100%; margin-bottom: 25px; position: relative; overflow: hidden; border: 1px solid #333; }
-        .goal-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--green)); transition: width 0.5s ease; }
-        .goal-text { position: absolute; width: 100%; text-align: center; font-size: 9px; font-weight: 700; line-height: 22px; text-transform: uppercase; letter-spacing: 1px; color: white; mix-blend-mode: difference; }
+        /* BADGE E GOAL */
+        .badge-box { text-align: center; margin-bottom: 10px; }
+        #userBadge { font-size: 10px; font-weight: 800; padding: 4px 12px; border-radius: 50px; background: #222; color: var(--accent); border: 1px solid var(--accent); text-transform: uppercase; }
+        
+        .goal-container { background: #1a1a1a; border-radius: 10px; height: 20px; width: 100%; margin: 10px 0 25px; position: relative; overflow: hidden; border: 1px solid #333; }
+        .goal-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--green)); transition: 1s ease; }
 
         /* GRID */
         .page { display: none; }
         .active { display: block; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn { background: var(--card); border: 1px solid #222; padding: 22px 10px; border-radius: 22px; text-align: center; transition: 0.2s; }
-        .btn:active { background: #1a1a1a; border-color: var(--accent); transform: scale(0.96); }
-        .btn b { display: block; font-size: 14px; margin-bottom: 4px; }
-        .btn span { font-size: 10px; color: var(--green); font-weight: bold; }
+        .btn { background: var(--card); border: 1px solid #222; padding: 20px 10px; border-radius: 20px; text-align: center; }
+        .btn:active { transform: scale(0.95); border-color: var(--accent); }
 
-        /* LISTE */
-        .list-box { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid #222; }
-        .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #222; font-size: 14px; }
+        /* STORICO */
+        .list-box { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #222; }
+        .row { border-bottom: 1px solid #222; padding: 12px 0; font-size: 13px; }
+        .row:last-child { border: none; }
+        .row-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .img-preview { width: 100%; height: 100px; object-fit: cover; border-radius: 10px; margin-top: 10px; display: none; background: #222; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; z-index: 999; }
     </style>
 </head>
 <body>
@@ -57,26 +52,22 @@
 
     <div class="header">
         <h1>KICKZONELAB</h1>
-        <div class="menu-btn" onclick="toggleMenu()">
-            <span></span><span></span><span></span>
-        </div>
+        <div class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
     </div>
 
-    <div class="top-stats">
-        <div class="stat-box"><b id="tLordo">0€</b><span>Lordo</span></div>
-        <div class="stat-box"><b id="tProfit" style="color:var(--green)">0€</b><span>Profitto</span></div>
+    <div class="badge-box">
+        <span id="userBadge">RESELLER JUNIOR</span>
     </div>
 
-    <!-- LINEA OBIETTIVO -->
     <div class="goal-container">
         <div class="goal-bar" id="goalBar"></div>
-        <div class="goal-text">Obiettivo 1500€: <span id="goalPercent">0%</span></div>
     </div>
 
     <div class="side-menu" id="sideMenu">
         <a href="#" class="menu-link" onclick="showP('home')">🏠 Vendita</a>
+        <a href="#" class="menu-link" onclick="showP('history')">📸 Archivio Foto</a>
+        <a href="#" class="menu-link" onclick="exportData()">📥 Esporta Dati (Excel)</a>
         <a href="#" class="menu-link" onclick="showP('rank')">🏆 Classifica</a>
-        <a href="#" class="menu-link" onclick="showP('months')">📅 Riassunto Mesi</a>
     </div>
 
     <div id="p-home" class="page active">
@@ -85,86 +76,94 @@
             <div class="btn" onclick="addS('McQueen', 130, 50)"><b>McQueen</b><span>+50€</span></div>
             <div class="btn" onclick="addS('Travis Scott', 1100, 300)"><b>Travis Scott</b><span>+300€</span></div>
             <div class="btn" onclick="addS('Dunk Low', 180, 60)"><b>Dunk Low</b><span>+60€</span></div>
-            <div class="btn" onclick="addS('Campus', 120, 40)"><b>Campus</b><span>+40€</span></div>
-            <div class="btn" onclick="addS('Yeezy 350', 250, 80)"><b>Yeezy 350</b><span>+80€</span></div>
         </div>
     </div>
 
+    <div id="p-history" class="page">
+        <h2 style="font-size:12px; margin-bottom:15px; color:#555;">STORICO E FOTO</h2>
+        <div class="list-box" id="historyContent"></div>
+    </div>
+
     <div id="p-rank" class="page">
-        <h2 style="font-size:12px; color:#555; margin-bottom:15px;">TOP ARTICOLI</h2>
         <div class="list-box" id="rankContent"></div>
     </div>
 
-    <div id="p-months" class="page">
-        <h2 style="font-size:12px; color:#555; margin-bottom:15px;">RIASSUNTO MENSILE</h2>
-        <div class="list-box" id="monthContent"></div>
-    </div>
-
     <script>
-        let sales = [];
-        let counts = {};
+        let sales = JSON.parse(localStorage.getItem('kzl_pro_sales')) || [];
         const GOAL = 1500;
 
         function toggleMenu() {
             document.getElementById('sideMenu').classList.toggle('open');
-            document.getElementById('overlay').style.display = 
-                document.getElementById('sideMenu').classList.contains('open') ? 'block' : 'none';
+            document.getElementById('overlay').style.display = document.getElementById('sideMenu').classList.contains('open') ? 'block' : 'none';
         }
 
         function showP(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('p-' + id).classList.add('active');
             toggleMenu();
-            if(id === 'rank') updateRank();
-            if(id === 'months') updateMonths();
+            if(id === 'history') updateHistory();
         }
 
-        function addS(shoe, lordo, profit) {
-            let p = prompt("Profitto per " + shoe + ":", profit);
-            if (!p) return;
-            p = parseFloat(p);
-
-            const sale = { shoe, lordo, p, date: new Date() };
-            sales.push(sale);
-            counts[shoe] = (counts[shoe] || 0) + 1;
-
-            updateTotals();
-        }
-
-        function updateTotals() {
-            let totalL = sales.reduce((a, b) => a + b.lordo, 0);
-            let totalP = sales.reduce((a, b) => a + b.p, 0);
+        function addS(shoe, lordo, pDef) {
+            let cl = prompt("Cliente:");
+            if(!cl) return;
+            let p = parseFloat(prompt("Profitto:", pDef));
             
-            document.getElementById('tLordo').innerText = totalL + "€";
-            document.getElementById('tProfit').innerText = totalP + "€";
+            const sale = { id: Date.now(), shoe, cl, lordo, p, date: new Date().toLocaleDateString(), img: null };
+            sales.push(sale);
+            save();
+            updateUI();
+        }
 
-            // AGGIORNA LA LINEA OBIETTIVO
+        function save() { localStorage.setItem('kzl_pro_sales', JSON.stringify(sales)); }
+
+        function updateUI() {
+            let totalP = sales.reduce((a, b) => a + b.p, 0);
             let percent = (totalP / GOAL) * 100;
-            if (percent > 100) percent = 100;
-            document.getElementById('goalBar').style.width = percent + "%";
-            document.getElementById('goalPercent').innerText = Math.round(percent) + "%";
+            document.getElementById('goalBar').style.width = Math.min(percent, 100) + "%";
+            
+            let badge = "RESELLER JUNIOR";
+            if(totalP > 500) badge = "PLUG ESPERTO";
+            if(totalP > 1500) badge = "KING OF THE LAB 👑";
+            document.getElementById('userBadge').innerText = badge;
         }
 
-        function updateRank() {
+        function updateHistory() {
             let html = "";
-            Object.entries(counts).sort((a,b) => b[1]-a[1]).forEach(item => {
-                html += `<div class="row"><span>${item[0]}</span><b>${item[1]} Paia</b></div>`;
+            sales.slice().reverse().forEach(s => {
+                html += `<div class="row">
+                    <div class="row-top"><b>${s.cl}</b><span>${s.date}</span></div>
+                    <div>${s.shoe} - <span style="color:var(--green)">+${s.p}€</span></div>
+                    <input type="file" accept="image/*" onchange="uploadImg(this, ${s.id})" style="margin-top:10px; font-size:10px;">
+                    <img id="img-${s.id}" src="${s.img || ''}" class="img-preview" style="display:${s.img ? 'block' : 'none'}">
+                </div>`;
             });
-            document.getElementById('rankContent').innerHTML = html || "Nessun dato";
+            document.getElementById('historyContent').innerHTML = html || "Nessuna vendita.";
         }
 
-        function updateMonths() {
-            const mData = {};
-            sales.forEach(s => {
-                const m = s.date.toLocaleString('it-IT', { month: 'long' });
-                mData[m] = (mData[m] || 0) + s.p;
-            });
-            let html = "";
-            for(let m in mData) {
-                html += `<div class="row"><span style="text-transform:capitalize">${m}</span><b style="color:var(--green)">+${mData[m]}€</b></div>`;
-            }
-            document.getElementById('monthContent').innerHTML = html || "Nessun dato";
+        function uploadImg(input, id) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const sale = sales.find(s => s.id === id);
+                sale.img = e.target.result;
+                save();
+                updateHistory();
+            };
+            reader.readAsDataURL(input.files[0]);
         }
+
+        function exportData() {
+            let csv = "Data,Cliente,Scarpa,Lordo,Profitto\n";
+            sales.forEach(s => csv += `${s.date},${s.cl},${s.shoe},${s.lordo},${s.p}\n`);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'KICKZONELAB_Report.csv');
+            a.click();
+        }
+
+        updateUI();
     </script>
 </body>
 </html>
