@@ -4,42 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>KICKZONELAB ADMIN</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #00e5ff; --bg: #000; --card: #121212; --green: #00ff88; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; padding: 20px 15px 80px 15px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .header h1 { font-family: 'Montserrat'; font-size: 16px; letter-spacing: 2px; }
-        .top-stats { display: flex; gap: 10px; margin-bottom: 20px; }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--bg); 
+            color: white; 
+            /* Questo risolve il problema della batteria/orario su iPhone */
+            padding: env(safe-area-inset-top) 15px 80px 15px; 
+            margin-top: 20px; 
+        }
+
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 25px; 
+            padding-top: 10px;
+        }
+        .header h1 { font-family: 'Montserrat'; font-size: 16px; letter-spacing: 2px; color: white; }
+        
+        .clean-btn {
+            font-size: 10px; 
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff4444; 
+            padding: 5px 10px;
+            border-radius: 50px;
+            border: 1px solid #ff4444;
+            font-weight: bold;
+        }
+
+        .top-stats { display: flex; gap: 10px; margin-bottom: 25px; }
         .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 15px; padding: 12px; text-align: center; }
-        .stat-box b { display: block; font-size: 18px; color: var(--accent); }
+        .stat-box b { display: block; font-size: 20px; color: var(--accent); }
+        .stat-box span { font-size: 9px; color: #666; font-weight: 800; text-transform: uppercase; }
+
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .btn-wrap { position: relative; }
-        .btn { background: var(--card); border: 1px solid #222; border-radius: 15px; text-align: center; overflow: hidden; padding-bottom: 10px; width: 100%; }
+        .btn { background: var(--card); border: 1px solid #222; border-radius: 15px; text-align: center; overflow: hidden; padding-bottom: 12px; width: 100%; transition: 0.2s; }
+        .btn:active { transform: scale(0.96); background: #1a1a1a; }
         .btn img { width: 100%; height: 110px; object-fit: cover; border-bottom: 1px solid #222; background: #1a1a1a; }
-        .btn b { display: block; font-size: 12px; padding: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .btn b { display: block; font-size: 12px; padding: 8px 5px 2px 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .btn span { font-size: 10px; color: var(--green); font-weight: bold; }
-        .edit-badge { position: absolute; top: 5px; right: 5px; background: var(--accent); color: #000; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 10; font-weight: bold; border: 2px solid #000; }
-        .btn.special { grid-column: span 2; background: #111; border: 1px dashed var(--accent); padding: 20px; margin-top: 10px; border-radius: 15px; color: var(--accent); text-align: center; font-weight: bold; }
+        
+        .edit-badge { 
+            position: absolute; top: 8px; right: 8px; background: var(--accent); color: #000; 
+            border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; 
+            justify-content: center; font-size: 14px; z-index: 10; font-weight: bold; border: 2px solid #000; 
+        }
+
+        .btn.special { 
+            grid-column: span 2; 
+            background: #111; 
+            border: 1px dashed var(--accent); 
+            padding: 22px; 
+            margin-top: 15px; 
+            border-radius: 15px; 
+            color: var(--accent); 
+            text-align: center; 
+            font-weight: bold; 
+            font-size: 14px;
+        }
+
         .page { display: none; }
         .active { display: block; }
-        #nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #080808; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid #222; z-index: 100; }
-        .nav-item { font-size: 11px; color: #666; text-decoration: none; font-weight: bold; }
+
+        #nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            background: rgba(8, 8, 8, 0.95); 
+            backdrop-filter: blur(10px);
+            display: flex; 
+            justify-content: space-around; 
+            padding: 20px 10px calc(10px + env(safe-area-inset-bottom)) 10px; 
+            border-top: 1px solid #222; 
+            z-index: 100; 
+        }
+        .nav-item { font-size: 12px; color: #555; text-decoration: none; font-weight: bold; letter-spacing: 1px; }
         .nav-item.active-nav { color: var(--accent); }
+
+        /* Stile Storico */
+        .hist-card { background: #121212; padding: 12px; border-radius: 15px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid #222; }
+        .hist-card img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; margin-right: 15px; background: #222; }
+        .hist-info { flex: 1; }
+        .hist-info b { font-size: 14px; display: block; }
+        .hist-info small { color: #666; font-size: 10px; }
+        .hist-price { color: var(--green); font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>KICKZONELAB</h1>
-        <div style="font-size: 10px; color: red;" onclick="resetAll()">PULISCI CACHE</div>
+        <div class="clean-btn" onclick="resetAll()">PULISCI CACHE</div>
     </div>
 
     <div class="top-stats">
-        <div class="stat-box"><b id="tLordo">0€</b><span style="font-size:9px">LORDO</span></div>
-        <div class="stat-box"><b id="tProfit" style="color:var(--green)">0€</b><span style="font-size:9px">PROFITTO</span></div>
+        <div class="stat-box"><b id="tLordo">0€</b><span>LORDO</span></div>
+        <div class="stat-box"><b id="tProfit" style="color:var(--green)">0€</b><span>PROFITTO</span></div>
     </div>
 
     <div id="p-home" class="page active">
@@ -48,7 +117,7 @@
     </div>
 
     <div id="p-history" class="page">
-        <h2 style="font-size:14px; margin-bottom:15px">STORICO VENDITE</h2>
+        <h2 style="font-size:16px; margin-bottom:20px; font-family: 'Montserrat';">STORICO VENDITE</h2>
         <div id="historyContent"></div>
     </div>
 
@@ -58,11 +127,11 @@
     </nav>
 
     <script>
-        const KEY = 'KICKZONE_FINAL_DB';
+        const KEY = 'KICKZONE_ULTRA_DB';
         const DEFAULT_IMG = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop";
 
         let db = JSON.parse(localStorage.getItem(KEY)) || {
-            items: [{ id: 1, name: 'Jordan 4', l: 350, p: 100, img: DEFAULT_IMG }],
+            items: [{ id: 1, name: 'Jordan 4 Red', l: 350, p: 100, img: DEFAULT_IMG }],
             sales: []
         };
 
@@ -71,7 +140,7 @@
                 localStorage.setItem(KEY, JSON.stringify(db));
                 renderHome();
             } catch(e) {
-                alert("Memoria piena! Cancella qualche articolo o usa foto più leggere.");
+                alert("Memoria iPhone piena! Usa foto più leggere.");
             }
         }
 
@@ -81,6 +150,7 @@
             document.getElementById('p-' + id).classList.add('active');
             document.getElementById('n-' + id).classList.add('active-nav');
             if(id === 'history') renderHistory();
+            window.scrollTo(0,0);
         }
 
         function addArticle() {
@@ -94,24 +164,20 @@
             input.onchange = e => {
                 let file = e.target.files[0];
                 let reader = new FileReader();
-                reader.onload = (event) => {
+                reader.onload = (ev) => {
                     let img = new Image();
                     img.onload = () => {
-                        // COMPRESSIONE FOTO PER IPHONE
                         let canvas = document.createElement('canvas');
                         let max_size = 400; 
-                        let width = img.width;
-                        let height = img.height;
+                        let width = img.width; let height = img.height;
                         if (width > height) { if (width > max_size) { height *= max_size / width; width = max_size; } }
                         else { if (height > max_size) { width *= max_size / height; height = max_size; } }
                         canvas.width = width; canvas.height = height;
                         canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-                        let dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                        
-                        db.items.push({ id: Date.now(), name, l: parseFloat(l), p: parseFloat(p), img: dataUrl });
+                        db.items.push({ id: Date.now(), name, l: parseFloat(l), p: parseFloat(p), img: canvas.toDataURL('image/jpeg', 0.6) });
                         save();
                     };
-                    img.src = event.target.result;
+                    img.src = ev.target.result;
                 };
                 reader.readAsDataURL(file);
             };
@@ -123,18 +189,18 @@
             let n = prompt("Modifica Nome:", i.name);
             if(!n) return;
             i.name = n;
-            i.l = parseFloat(prompt("Modifica Lordo:", i.l));
-            i.p = parseFloat(prompt("Modifica Profitto:", i.p));
+            i.l = parseFloat(prompt("Lordo (€):", i.l));
+            i.p = parseFloat(prompt("Profitto (€):", i.p));
             save();
         }
 
         function sell(id) {
             let i = db.items.find(x => x.id === id);
-            let cl = prompt("Cliente per " + i.name + ":");
+            let cl = prompt("Nome Cliente:");
             if(!cl) return;
-            db.sales.push({ name: i.name, cl, p: i.p, l: i.l, img: i.img, d: new Date().toLocaleDateString() });
+            db.sales.push({ name: i.name, cl, p: i.p, l: i.l, img: i.img, d: new Date().toLocaleDateString('it-IT') });
             save();
-            alert("Venduta!");
+            alert("Vendita salvata!");
         }
 
         function renderHome() {
@@ -155,26 +221,26 @@
         }
 
         function updateStats() {
-            let totalL = db.sales.reduce((a, b) => a + b.l, 0);
-            let totalP = db.sales.reduce((a, b) => a + b.p, 0);
-            document.getElementById('tLordo').innerText = totalL + "€";
-            document.getElementById('tProfit').innerText = totalP + "€";
+            let tL = db.sales.reduce((a, b) => a + (b.l || 0), 0);
+            let tP = db.sales.reduce((a, b) => a + (b.p || 0), 0);
+            document.getElementById('tLordo').innerText = tL + "€";
+            document.getElementById('tProfit').innerText = tP + "€";
         }
 
         function renderHistory() {
             let html = "";
             db.sales.slice().reverse().forEach(s => {
-                html += `<div style="background:#121212; padding:10px; border-radius:15px; margin-bottom:10px; display:flex; align-items:center; border:1px solid #222;">
-                    <img src="${s.img}" style="width:45px; height:45px; border-radius:8px; object-fit:cover; margin-right:12px;">
-                    <div style="flex:1"><b>${s.cl}</b><br><small style="color:#666">${s.name}</small></div>
-                    <b style="color:var(--green)">+${s.p}€</b>
+                html += `<div class="hist-card">
+                    <img src="${s.img}">
+                    <div class="hist-info"><b>${s.cl}</b><small>${s.name} • ${s.d}</small></div>
+                    <div class="hist-price">+${s.p}€</div>
                 </div>`;
             });
-            document.getElementById('historyContent').innerHTML = html || "Nessuna vendita.";
+            document.getElementById('historyContent').innerHTML = html || "<p style='color:#666; text-align:center;'>Nessun dato.</p>";
         }
 
         function resetAll() {
-            if(confirm("Questo risolverà i problemi di visualizzazione sul telefono. Continuare?")) {
+            if(confirm("Vuoi pulire la memoria? Questo risolverà i bug ma cancellerà i dati non salvati.")) {
                 localStorage.clear();
                 location.reload();
             }
