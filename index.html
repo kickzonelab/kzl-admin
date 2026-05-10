@@ -8,113 +8,74 @@
     <title>KICKZONELAB ADMIN</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #00e5ff; --bg: #000; --card: rgba(255,255,255,0.07); --green: #00ff88; --red: #ff4444; }
+        :root { --accent: #00e5ff; --bg: #000; --card: #121212; --green: #00ff88; --red: #ff4444; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background: #000; 
-            color: white; 
-            transition: background 0.5s ease;
-            min-height: 100vh;
-            padding: calc(env(safe-area-inset-top) + 20px) 15px 100px 15px; 
-        }
-
-        body.bg-home { background: #000; }
-        body.bg-goal { background: radial-gradient(circle at top right, #001a2e, #000); }
-        body.bg-improve { background: radial-gradient(circle at top right, #1a002e, #000); }
-        body.bg-history { background: radial-gradient(circle at top right, #1a1a1a, #000); }
-
-        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: 0.8s; }
-        #splash img { width: 110px; animation: pulse 2s infinite; }
-
-        /* HEADER */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; height: 40px; }
-        .header h1 { font-family: 'Montserrat'; font-size: 18px; letter-spacing: 2px; }
-        .menu-icon { width: 30px; height: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; z-index: 1001; }
-        .menu-icon span { display: block; height: 3px; width: 100%; background: var(--accent); border-radius: 3px; }
-
-        /* STATS */
-        #top-stats { display: flex; gap: 10px; margin-bottom: 25px; }
-        .stat-box { flex: 1; background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 18px 5px; text-align: center; backdrop-filter: blur(10px); }
-        .stat-box b { display: block; font-size: 20px; color: var(--accent); }
-        .stat-box span { font-size: 9px; color: #888; font-weight: 800; }
-
-        /* SIDE MENU */
-        #side-menu { position: fixed; top: 0; right: -100%; width: 85%; height: 100%; background: rgba(0,0,0,0.98); backdrop-filter: blur(20px); z-index: 1000; transition: 0.4s; padding: 80px 40px; border-left: 1px solid #222; }
-        #side-menu.open { right: 0; }
-        .menu-link { display: block; color: white; font-size: 22px; font-weight: bold; margin-bottom: 30px; text-decoration: none; font-family: 'Montserrat'; opacity: 0.6; }
-        .menu-link.active { color: var(--accent); opacity: 1; }
-
-        /* GRID HOME - FIX VISUALIZZAZIONE */
-        .grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
-            width: 100%;
-            padding-bottom: 20px;
-        }
-        .btn-wrap { position: relative; width: 100%; }
-        .btn { 
-            background: var(--card); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 22px; 
-            text-align: center; 
-            overflow: hidden; 
-            padding-bottom: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .btn img { width: 100%; height: 110px; object-fit: contain; padding: 10px; background: rgba(255,255,255,0.03); }
-        .btn b { font-size: 11px; padding: 8px 4px 2px; text-transform: uppercase; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .del-item { position: absolute; top: -5px; right: -5px; background: var(--red); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid #000; z-index: 10; }
-
-        /* SEZIONI */
-        .page { display: none; animation: fadeIn 0.4s ease; }
-        .page.active { display: block; }
-        h2 { font-family: 'Montserrat'; font-size: 24px; margin-bottom: 20px; }
-
-        .add-btn { background: var(--accent); color: #000; padding: 18px; border-radius: 20px; text-align: center; font-weight: 800; font-size: 14px; margin-top: 10px; font-family: 'Montserrat'; }
+        body { font-family: 'Poppins', sans-serif; background: #000; color: white; min-height: 100vh; padding: calc(env(safe-area-inset-top) + 20px) 15px 100px 15px; transition: background 0.4s; }
         
-        /* TODO LIST */
-        .todo-item { background: var(--card); padding: 18px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
-        .checkbox { width: 26px; height: 26px; border: 2px solid var(--accent); border-radius: 50%; flex-shrink: 0; }
-        .todo-item.done { border-color: var(--green); opacity: 0.6; }
-        .todo-item.done .checkbox { background: var(--green); border-color: var(--green); position: relative; }
-        .todo-item.done .checkbox::after { content: '✓'; color: #000; position: absolute; left: 5px; top: 0px; font-weight: bold; }
-        .todo-item.done span { text-decoration: line-through; }
+        /* SFONDI DINAMICI */
+        body.bg-home { background: #000; }
+        body.bg-goal { background: #001a2e; }
+        body.bg-improve { background: #1a002e; }
+        body.bg-history { background: #1a1a1a; }
 
-        /* GOAL */
-        .goal-container { background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; padding: 30px 20px; text-align: center; }
-        .goal-bar { width: 100%; height: 14px; background: rgba(0,0,0,0.3); border-radius: 10px; margin: 20px 0; overflow: hidden; border: 1px solid #333; }
-        #progress { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); width: 0%; transition: 1s; }
+        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+        #splash img { width: 100px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.05); opacity: 1; } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header h1 { font-family: 'Montserrat'; font-size: 18px; }
+        .menu-icon { width: 30px; height: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+        .menu-icon span { display: block; height: 3px; background: var(--accent); border-radius: 3px; }
+
+        #top-stats { display: flex; gap: 10px; margin-bottom: 20px; }
+        .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 15px; padding: 15px; text-align: center; }
+        .stat-box b { display: block; font-size: 20px; color: var(--accent); }
+        .stat-box span { font-size: 9px; color: #666; font-weight: bold; }
+
+        #side-menu { position: fixed; top: 0; right: -100%; width: 80%; height: 100%; background: #0a0a0a; z-index: 1000; transition: 0.4s; padding: 60px 30px; border-left: 1px solid #222; }
+        #side-menu.open { right: 0; }
+        .menu-link { display: block; color: white; font-size: 20px; font-weight: bold; margin-bottom: 25px; text-decoration: none; font-family: 'Montserrat'; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn-wrap { position: relative; background: var(--card); border-radius: 15px; border: 1px solid #222; overflow: hidden; }
+        .btn-wrap img { width: 100%; height: 120px; object-fit: contain; background: #1a1a1a; padding: 10px; }
+        .btn-info { padding: 10px; text-align: center; }
+        .btn-info b { font-size: 11px; display: block; text-transform: uppercase; margin-bottom: 4px; }
+        .del-item { position: absolute; top: 5px; right: 5px; background: var(--red); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid #000; z-index: 2; }
+
+        .page { display: none; }
+        .page.active { display: block; }
+        .add-btn { background: var(--accent); color: #000; padding: 15px; border-radius: 15px; text-align: center; font-weight: 800; margin-top: 20px; }
+
+        .todo-item { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; border: 1px solid #222; }
+        .checkbox { width: 22px; height: 22px; border: 2px solid var(--accent); border-radius: 50%; }
+        .todo-item.done { border-color: var(--green); opacity: 0.5; }
+        .todo-item.done .checkbox { background: var(--green); border-color: var(--green); }
+
+        .goal-bar { width: 100%; height: 12px; background: #222; border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        #progress { height: 100%; background: var(--accent); width: 0%; transition: 1s; }
     </style>
 </head>
 <body class="bg-home">
 
     <div id="splash">
         <img src="logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2742/2742674.png'">
-        <div id="quote" style="font-family:'Montserrat'; font-size:12px; color:var(--accent); text-align:center; margin-top:20px; padding:0 30px; text-transform:uppercase;">DIVENTA COSÌ RICCO DA NON DOVER PIÙ GUARDARE IL PREZZO</div>
+        <p style="margin-top:20px; font-family:'Montserrat'; color:var(--accent); font-size:10px; padding: 0 40px; text-align:center;">DIVENTA COSÌ RICCO DA NON GUARDARE IL PREZZO</p>
     </div>
 
     <div id="side-menu">
-        <div class="close-menu" onclick="toggleMenu()" style="position:absolute; top:20px; right:20px; font-size:30px;">×</div>
-        <a href="#" class="menu-link active" onclick="showPage('home')">HOME</a>
+        <div onclick="toggleMenu()" style="text-align:right; font-size:30px; margin-bottom:30px;">×</div>
+        <a href="#" class="menu-link" onclick="showPage('home')">HOME</a>
         <a href="#" class="menu-link" onclick="showPage('history')">STORICO</a>
         <a href="#" class="menu-link" onclick="showPage('goal')">OBIETTIVI</a>
         <a href="#" class="menu-link" onclick="showPage('improve')">AZIENDA</a>
-        <button onclick="exportDB()" style="margin-top:40px; background:none; border:1px solid #333; color:#666; padding:10px; border-radius:10px; width:100%; font-size:10px;">BACKUP DATI</button>
+        <button onclick="localStorage.clear(); location.reload();" style="color:red; background:none; border:none; margin-top:50px;">RESET TOTALE</button>
     </div>
 
     <div class="header">
         <h1 id="page-title">KICKZONELAB</h1>
-        <div class="menu-icon" onclick="toggleMenu()">
-            <span></span><span></span><span></span>
-        </div>
+        <div class="menu-icon" onclick="toggleMenu()"><span></span><span></span><span></span></div>
     </div>
 
     <div id="top-stats">
@@ -124,36 +85,36 @@
 
     <div id="p-home" class="page active">
         <div class="grid" id="mainGrid"></div>
-        <div class="add-btn" style="background:none; border: 2px dashed var(--accent); color: var(--accent); margin-top:30px;" onclick="addArticle()">+ AGGIUNGI ARTICOLO</div>
-        <button onclick="location.reload()" style="background:none; border:none; color:#333; width:100%; margin-top:20px; font-size:10px;">REFRESH APP</button>
+        <div class="add-btn" onclick="addArticle()">+ AGGIUNGI ARTICOLO</div>
     </div>
 
     <div id="p-goal" class="page">
         <h2>OBIETTIVI</h2>
-        <div class="goal-container">
-            <p style="color:#888; font-size:12px;">TARGET PROFITTO: 1.500€</p>
+        <div class="stat-box" style="margin-top:20px;">
+            <p>TARGET: 1.500€</p>
             <div class="goal-bar"><div id="progress"></div></div>
-            <p id="goalText" style="font-family:'Montserrat'; color:var(--accent);"></p>
+            <p id="goalText">0%</p>
         </div>
     </div>
 
     <div id="p-improve" class="page">
         <h2>AZIENDA</h2>
         <div id="improveList"></div>
-        <div class="add-btn" onclick="addImprovement()">+ AGGIUNGI OBIETTIVO</div>
+        <div class="add-btn" onclick="addImprovement()">+ NUOVO OBIETTIVO</div>
     </div>
 
     <div id="p-history" class="page">
         <h2>STORICO</h2>
-        <div id="historyContent"></div>
+        <div id="historyList"></div>
     </div>
 
     <script>
-        const KEY = 'KZL_FIX_V10';
+        // CHIAVE FISSA PER NON PERDERE DATI
+        const KEY = 'KICKZONE_FINAL_DATA';
         let db = JSON.parse(localStorage.getItem(KEY)) || { items: [], sales: [], improvements: [] };
 
         window.onload = () => {
-            setTimeout(() => { document.getElementById('splash').style.opacity = '0'; setTimeout(()=> document.getElementById('splash').style.display='none', 600); }, 2200);
+            setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 2000);
             renderHome();
         };
 
@@ -164,32 +125,32 @@
             document.getElementById('top-stats').style.display = (id === 'home') ? 'flex' : 'none';
             document.getElementById('page-title').innerText = (id === 'home') ? 'KICKZONELAB' : id.toUpperCase();
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
             document.getElementById('p-' + id).classList.add('active');
-            if(id==='goal') updateGoal();
-            if(id==='improve') renderImprovements();
-            if(id==='history') renderHistory();
+            if(id === 'goal') updateGoal();
+            if(id === 'improve') renderImprove();
+            if(id === 'history') renderHistory();
             toggleMenu();
         }
 
-        function save() { localStorage.setItem(KEY, JSON.stringify(db)); renderHome(); }
+        function save() { 
+            localStorage.setItem(KEY, JSON.stringify(db)); 
+            renderHome(); 
+        }
 
         function addArticle() {
-            let name = prompt("Nome:"); if(!name) return;
+            let name = prompt("Modello:"); if(!name) return;
             let l = prompt("Lordo:"); let p = prompt("Profitto:");
             let input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
             input.onchange = e => {
                 let r = new FileReader();
                 r.onload = ev => {
-                    // COMPRESSIONE IMMAGINE PER NON BLOCCARE L'APP
                     let img = new Image();
                     img.onload = () => {
                         let canvas = document.createElement('canvas');
                         let ctx = canvas.getContext('2d');
-                        let w = 400; let h = img.height * (400 / img.width);
-                        canvas.width = w; canvas.height = h;
-                        ctx.drawImage(img, 0, 0, w, h);
-                        db.items.push({ id: Date.now(), name, l: parseFloat(l), p: parseFloat(p), img: canvas.toDataURL('image/jpeg', 0.7) });
+                        canvas.width = 300; canvas.height = 300; // IMMAGINE PICCOLA PER NON BLOCCARE MEMORIA
+                        ctx.drawImage(img, 0, 0, 300, 300);
+                        db.items.push({ id: Date.now(), name, l: parseFloat(l), p: parseFloat(p), img: canvas.toDataURL('image/jpeg', 0.6) });
                         save();
                     };
                     img.src = ev.target.result;
@@ -201,27 +162,26 @@
 
         function renderHome() {
             let grid = document.getElementById('mainGrid');
-            grid.innerHTML = ""; // Pulisci prima di renderizzare
-            db.items.forEach(i => {
-                let div = document.createElement('div');
-                div.className = "btn-wrap";
-                div.innerHTML = `
+            grid.innerHTML = db.items.map(i => `
+                <div class="btn-wrap">
                     <div class="del-item" onclick="deleteItem(${i.id})">×</div>
-                    <div class="btn" onclick="sell(${i.id})">
+                    <div onclick="sell(${i.id})">
                         <img src="${i.img}">
-                        <b>${i.name}</b>
-                        <span style="color:var(--green); font-size:12px; font-weight:bold;">+${i.p}€</span>
-                    </div>`;
-                grid.appendChild(div);
-            });
+                        <div class="btn-info">
+                            <b>${i.name}</b>
+                            <span style="color:var(--green); font-weight:bold;">+${i.p}€</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
             updateStats();
         }
 
-        function deleteItem(id) { if(confirm("Eliminare?")) { db.items = db.items.filter(x=>x.id!==id); save(); } }
+        function deleteItem(id) { if(confirm("Elimina?")) { db.items = db.items.filter(x=>x.id!==id); save(); } }
 
         function sell(id) {
             let i = db.items.find(x => x.id === id);
-            db.sales.push({ name: i.name, p: i.p, l: i.l, d: new Date().toLocaleDateString(), img: i.img });
+            db.sales.push({ name: i.name, p: i.p, l: i.l, d: new Date().toLocaleDateString() });
             save(); alert("VENDUTO!");
         }
 
@@ -233,41 +193,31 @@
         }
 
         function updateGoal() {
-            let target = 1500;
-            let current = db.sales.reduce((a,b)=> a+(b.p||0), 0);
-            let perc = Math.min((current / target) * 100, 100);
-            document.getElementById('progress').style.width = perc + "%";
-            document.getElementById('goalText').innerText = current + "€ / " + target + "€ (" + Math.floor(perc) + "%)";
+            let t = 1500; let c = db.sales.reduce((a,b)=> a+(b.p||0), 0);
+            let p = Math.min((c/t)*100, 100);
+            document.getElementById('progress').style.width = p + "%";
+            document.getElementById('goalText').innerText = Math.floor(p) + "% (" + c + "€ / " + t + "€)";
         }
 
         function addImprovement() {
-            let t = prompt("Nuovo obiettivo:");
-            if(t) { db.improvements.push({ text: t, done: false }); save(); renderImprovements(); }
+            let t = prompt("Obiettivo:");
+            if(t) { db.improvements.push({ text: t, done: false }); save(); renderImprove(); }
         }
 
-        function renderImprovements() {
+        function renderImprove() {
             document.getElementById('improveList').innerHTML = db.improvements.map((t, i) => `
-                <div class="todo-item ${t.done ? 'done' : ''}" onclick="db.improvements[${i}].done=!db.improvements[${i}].done; save(); renderImprovements();">
+                <div class="todo-item ${t.done ? 'done' : ''}" onclick="db.improvements[${i}].done=!db.improvements[${i}].done; save(); renderImprove();">
                     <div class="checkbox"></div>
-                    <span style="flex:1;">${t.text}</span>
-                    <div onclick="event.stopPropagation(); db.improvements.splice(${i},1); save(); renderImprovements();" style="color:var(--red);">×</div>
+                    <span style="flex:1">${t.text}</span>
+                    <div onclick="event.stopPropagation(); db.improvements.splice(${i},1); save(); renderImprove();">×</div>
                 </div>
-            `).join('') || "<p style='text-align:center; color:#333;'>Nessun obiettivo.</p>";
+            `).join('');
         }
 
         function renderHistory() {
-            document.getElementById('historyContent').innerHTML = db.sales.slice().reverse().map(s => `
-                <div class="todo-item" style="opacity:1">
-                    <img src="${s.img}" style="width:40px; height:40px; object-fit:cover; border-radius:5px;">
-                    <div style="flex:1"><b>${s.name}</b><br><small style="color:#555;">${s.d}</small></div>
-                    <b style="color:var(--green)">+${s.p}€</b>
-                </div>
-            `).join('') || "<p style='text-align:center; color:#333;'>Vuoto.</p>";
-        }
-
-        function exportDB() { 
-            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
-            let a = document.createElement('a'); a.href = dataStr; a.download = "kzl_backup.json"; a.click();
+            document.getElementById('historyList').innerHTML = db.sales.slice().reverse().map(s => `
+                <div class="todo-item"><b>${s.name}</b> <span style="margin-left:auto; color:var(--green);">+${s.p}€</span></div>
+            `).join('');
         }
     </script>
 </body>
