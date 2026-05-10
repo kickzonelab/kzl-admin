@@ -15,39 +15,36 @@
             font-family: 'Poppins', sans-serif; 
             background: var(--bg); 
             color: white; 
-            /* Questo risolve il problema della batteria/orario su iPhone */
-            padding: env(safe-area-inset-top) 15px 80px 15px; 
-            margin-top: 20px; 
+            padding: calc(env(safe-area-inset-top) + 20px) 15px 100px 15px; 
         }
 
+        /* HEADER FISSO PER AGGIORNARE SEMPRE */
         .header { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            margin-bottom: 25px; 
-            padding-top: 10px;
+            margin-bottom: 25px;
         }
-        .header h1 { font-family: 'Montserrat'; font-size: 16px; letter-spacing: 2px; color: white; }
+        .header h1 { font-family: 'Montserrat'; font-size: 15px; letter-spacing: 2px; }
         
-        .clean-btn {
-            font-size: 10px; 
-            background: rgba(255, 0, 0, 0.2);
-            color: #ff4444; 
-            padding: 5px 10px;
-            border-radius: 50px;
-            border: 1px solid #ff4444;
+        .refresh-btn {
+            font-size: 10px;
+            background: var(--accent);
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 8px;
             font-weight: bold;
+            text-transform: uppercase;
         }
 
         .top-stats { display: flex; gap: 10px; margin-bottom: 25px; }
-        .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 15px; padding: 12px; text-align: center; }
+        .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 18px; padding: 15px 10px; text-align: center; }
         .stat-box b { display: block; font-size: 20px; color: var(--accent); }
-        .stat-box span { font-size: 9px; color: #666; font-weight: 800; text-transform: uppercase; }
+        .stat-box span { font-size: 9px; color: #666; font-weight: 800; }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .btn-wrap { position: relative; }
-        .btn { background: var(--card); border: 1px solid #222; border-radius: 15px; text-align: center; overflow: hidden; padding-bottom: 12px; width: 100%; transition: 0.2s; }
-        .btn:active { transform: scale(0.96); background: #1a1a1a; }
+        .btn { background: var(--card); border: 1px solid #222; border-radius: 18px; text-align: center; overflow: hidden; padding-bottom: 12px; width: 100%; }
         .btn img { width: 100%; height: 110px; object-fit: cover; border-bottom: 1px solid #222; background: #1a1a1a; }
         .btn b { display: block; font-size: 12px; padding: 8px 5px 2px 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .btn span { font-size: 10px; color: var(--green); font-weight: bold; }
@@ -62,13 +59,12 @@
             grid-column: span 2; 
             background: #111; 
             border: 1px dashed var(--accent); 
-            padding: 22px; 
-            margin-top: 15px; 
-            border-radius: 15px; 
+            padding: 20px; 
+            margin-top: 10px; 
+            border-radius: 18px; 
             color: var(--accent); 
             text-align: center; 
-            font-weight: bold; 
-            font-size: 14px;
+            font-weight: bold;
         }
 
         .page { display: none; }
@@ -79,31 +75,31 @@
             bottom: 0; 
             left: 0; 
             width: 100%; 
-            background: rgba(8, 8, 8, 0.95); 
-            backdrop-filter: blur(10px);
+            background: rgba(10, 10, 10, 0.9); 
+            backdrop-filter: blur(15px);
             display: flex; 
             justify-content: space-around; 
-            padding: 20px 10px calc(10px + env(safe-area-inset-bottom)) 10px; 
+            padding: 15px 10px calc(15px + env(safe-area-inset-bottom)) 10px; 
             border-top: 1px solid #222; 
             z-index: 100; 
         }
-        .nav-item { font-size: 12px; color: #555; text-decoration: none; font-weight: bold; letter-spacing: 1px; }
+        .nav-item { font-size: 11px; color: #555; text-decoration: none; font-weight: bold; letter-spacing: 1px; }
         .nav-item.active-nav { color: var(--accent); }
 
-        /* Stile Storico */
-        .hist-card { background: #121212; padding: 12px; border-radius: 15px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid #222; }
-        .hist-card img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; margin-right: 15px; background: #222; }
+        .hist-card { background: #121212; padding: 12px; border-radius: 15px; margin-bottom: 10px; display: flex; align-items: center; border: 1px solid #222; }
+        .hist-card img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; margin-right: 12px; }
         .hist-info { flex: 1; }
-        .hist-info b { font-size: 14px; display: block; }
-        .hist-info small { color: #666; font-size: 10px; }
-        .hist-price { color: var(--green); font-weight: bold; font-size: 14px; }
+        .hist-price { color: var(--green); font-weight: bold; }
+        
+        /* TASTO RESET NASCOSTO IN BASSO */
+        .debug-reset { text-align: center; margin-top: 40px; font-size: 10px; color: #333; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>KICKZONELAB</h1>
-        <div class="clean-btn" onclick="resetAll()">PULISCI CACHE</div>
+        <div class="refresh-btn" onclick="hardRefresh()">Refresh ↻</div>
     </div>
 
     <div class="top-stats">
@@ -114,10 +110,11 @@
     <div id="p-home" class="page active">
         <div class="grid" id="mainGrid"></div>
         <div class="btn special" onclick="addArticle()">➕ AGGIUNGI ARTICOLO</div>
+        <div class="debug-reset" onclick="resetAll()">Pulisci Cache e Reset</div>
     </div>
 
     <div id="p-history" class="page">
-        <h2 style="font-size:16px; margin-bottom:20px; font-family: 'Montserrat';">STORICO VENDITE</h2>
+        <h2 style="font-size:16px; margin-bottom:15px;">STORICO</h2>
         <div id="historyContent"></div>
     </div>
 
@@ -127,21 +124,23 @@
     </nav>
 
     <script>
-        const KEY = 'KICKZONE_ULTRA_DB';
+        const KEY = 'KZL_STORAGE_V1';
         const DEFAULT_IMG = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop";
 
         let db = JSON.parse(localStorage.getItem(KEY)) || {
-            items: [{ id: 1, name: 'Jordan 4 Red', l: 350, p: 100, img: DEFAULT_IMG }],
+            items: [{ id: 1, name: 'Jordan 4', l: 350, p: 100, img: DEFAULT_IMG }],
             sales: []
         };
 
+        // FUNZIONE REFRESH REALE
+        function hardRefresh() {
+            // Aggiunge un parametro casuale all'URL per forzare il download del nuovo codice
+            window.location.href = window.location.pathname + '?reload=' + new Date().getTime();
+        }
+
         function save() {
-            try {
-                localStorage.setItem(KEY, JSON.stringify(db));
-                renderHome();
-            } catch(e) {
-                alert("Memoria iPhone piena! Usa foto più leggere.");
-            }
+            localStorage.setItem(KEY, JSON.stringify(db));
+            renderHome();
         }
 
         function showP(id) {
@@ -150,14 +149,13 @@
             document.getElementById('p-' + id).classList.add('active');
             document.getElementById('n-' + id).classList.add('active-nav');
             if(id === 'history') renderHistory();
-            window.scrollTo(0,0);
         }
 
         function addArticle() {
-            let name = prompt("Nome scarpa:");
+            let name = prompt("Modello:");
             if(!name) return;
-            let l = prompt("Lordo (€):", "300");
-            let p = prompt("Profitto (€):", "100");
+            let l = prompt("Lordo:", "300");
+            let p = prompt("Profitto:", "100");
             
             let input = document.createElement('input');
             input.type = 'file'; input.accept = 'image/*';
@@ -186,21 +184,21 @@
 
         function editItem(id) {
             let i = db.items.find(x => x.id === id);
-            let n = prompt("Modifica Nome:", i.name);
+            let n = prompt("Nome:", i.name);
             if(!n) return;
             i.name = n;
-            i.l = parseFloat(prompt("Lordo (€):", i.l));
-            i.p = parseFloat(prompt("Profitto (€):", i.p));
+            i.l = parseFloat(prompt("Lordo:", i.l));
+            i.p = parseFloat(prompt("Profitto:", i.p));
             save();
         }
 
         function sell(id) {
             let i = db.items.find(x => x.id === id);
-            let cl = prompt("Nome Cliente:");
+            let cl = prompt("Cliente:");
             if(!cl) return;
             db.sales.push({ name: i.name, cl, p: i.p, l: i.l, img: i.img, d: new Date().toLocaleDateString('it-IT') });
             save();
-            alert("Vendita salvata!");
+            alert("Venduto!");
         }
 
         function renderHome() {
@@ -232,18 +230,15 @@
             db.sales.slice().reverse().forEach(s => {
                 html += `<div class="hist-card">
                     <img src="${s.img}">
-                    <div class="hist-info"><b>${s.cl}</b><small>${s.name} • ${s.d}</small></div>
+                    <div class="hist-info"><b>${s.cl}</b><br><small style="color:#666">${s.name}</small></div>
                     <div class="hist-price">+${s.p}€</div>
                 </div>`;
             });
-            document.getElementById('historyContent').innerHTML = html || "<p style='color:#666; text-align:center;'>Nessun dato.</p>";
+            document.getElementById('historyContent').innerHTML = html || "<p style='text-align:center; color:#444'>Vuoto</p>";
         }
 
         function resetAll() {
-            if(confirm("Vuoi pulire la memoria? Questo risolverà i bug ma cancellerà i dati non salvati.")) {
-                localStorage.clear();
-                location.reload();
-            }
+            if(confirm("Cancella tutto?")) { localStorage.clear(); location.reload(); }
         }
 
         renderHome();
