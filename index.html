@@ -9,184 +9,157 @@
     <style>
         :root { --accent: #00e5ff; --bg: #000; --card: #121212; --green: #00ff88; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; padding: 20px 15px; }
-
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; padding: 20px 15px 80px 15px; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .header h1 { font-family: 'Montserrat'; font-size: 18px; letter-spacing: 2px; }
-
+        .header h1 { font-family: 'Montserrat'; font-size: 16px; letter-spacing: 2px; }
         .top-stats { display: flex; gap: 10px; margin-bottom: 20px; }
         .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 15px; padding: 12px; text-align: center; }
         .stat-box b { display: block; font-size: 18px; color: var(--accent); }
         .stat-box span { font-size: 9px; color: #666; }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .btn-wrap { position: relative; }
-        .btn { background: var(--card); border: 1px solid #222; border-radius: 15px; text-align: center; overflow: hidden; padding-bottom: 10px; width: 100%; transition: 0.2s; }
-        .btn:active { transform: scale(0.98); }
+        .btn { background: var(--card); border: 1px solid #222; border-radius: 15px; text-align: center; overflow: hidden; padding-bottom: 10px; width: 100%; }
         .btn img { width: 100%; height: 100px; object-fit: cover; border-bottom: 1px solid #222; background: #1a1a1a; }
-        .btn b { display: block; font-size: 12px; padding: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .btn b { display: block; font-size: 12px; padding: 5px; }
         .btn span { font-size: 10px; color: var(--green); font-weight: bold; }
-        
-        .edit-badge { 
-            position: absolute; top: 5px; right: 5px; background: var(--accent); color: #000; 
-            border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; 
-            justify-content: center; font-size: 12px; z-index: 10; font-weight: bold;
-        }
-
-        .btn.special { grid-column: span 2; background: #111; border: 1px dashed var(--accent); padding: 20px; margin-top: 10px; border-radius: 15px; }
-        
+        .edit-badge { position: absolute; top: 5px; right: 5px; background: var(--accent); color: #000; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 10; font-weight: bold; }
+        .btn.special { grid-column: span 2; background: #111; border: 1px dashed var(--accent); padding: 20px; margin-top: 10px; border-radius: 15px; color: var(--accent); font-weight: bold; }
         .page { display: none; }
         .active { display: block; }
-
-        #menu { position: fixed; bottom: 0; left: 0; width: 100%; background: #080808; display: flex; justify-content: space-around; padding: 10px; border-top: 1px solid #222; z-index: 100; }
-        .menu-item { font-size: 10px; color: #666; text-decoration: none; text-align: center; }
-        .menu-item.active-link { color: var(--accent); }
+        #nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #080808; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid #222; z-index: 100; }
+        .nav-item { font-size: 11px; color: #666; text-decoration: none; font-weight: bold; }
+        .nav-item.active-nav { color: var(--accent); }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>KICKZONELAB</h1>
-        <div style="color: var(--accent); font-size: 10px;" onclick="location.reload()">REFRESH ↻</div>
+        <div style="font-size: 10px; color: red;" onclick="resetAll()">RESET TOTALE</div>
     </div>
 
     <div class="top-stats">
         <div class="stat-box"><b id="tLordo">0€</b><span>LORDO</span></div>
-        <div class="stat-box"><b id="tProfit" style="color:var(--green)">0€</b><span>PROFITTO</span></div>
+        <div class="stat-box"><b id="tProfit">0€</b><span>PROFITTO</span></div>
     </div>
 
     <div id="p-home" class="page active">
         <div class="grid" id="mainGrid"></div>
-        <div class="btn special" onclick="editProduct(null)">
-            <b>➕ AGGIUNGI ARTICOLO</b><br>
-            <small style="color:var(--accent); font-size: 9px;">Verrà salvato qui in Home</small>
-        </div>
+        <div class="btn special" onclick="addArticle()">➕ AGGIUNGI ARTICOLO</div>
     </div>
 
     <div id="p-history" class="page">
-        <h2 style="font-size: 14px; margin-bottom: 10px;">STORICO VENDITE</h2>
         <div id="historyContent"></div>
     </div>
 
-    <div id="menu">
-        <a href="#" class="menu-item active-link" id="l-home" onclick="showP('home')">HOME</a>
-        <a href="#" class="menu-item" id="l-history" onclick="showP('history')">STORICO</a>
-        <a href="#" class="menu-item" onclick="localStorage.clear(); location.reload();" style="color: red;">RESET</a>
-    </div>
+    <nav id="nav">
+        <a href="#" class="nav-item active-nav" id="n-home" onclick="showP('home')">HOME</a>
+        <a href="#" class="nav-item" id="n-history" onclick="showP('history')">STORICO</a>
+    </nav>
 
     <script>
-        // Database unificato per evitare perdite
-        const DB_KEY = 'KICKZONE_DATA_FINAL';
-        const IMG_DEFAULT = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop";
+        const KEY = 'KICKZONE_MASTER_DB';
+        const IMG = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop";
 
-        let storage = JSON.parse(localStorage.getItem(DB_KEY)) || {
-            products: [
-                { id: 1, name: 'Jordan 4', lordo: 350, profit: 100, img: IMG_DEFAULT },
-                { id: 2, name: 'McQueen', lordo: 130, profit: 50, img: IMG_DEFAULT }
-            ],
+        let db = JSON.parse(localStorage.getItem(KEY)) || {
+            items: [{ id: 1, name: 'Jordan 4', l: 350, p: 100, img: IMG }],
             sales: []
         };
 
         function showP(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active-link'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
             document.getElementById('p-' + id).classList.add('active');
-            document.getElementById('l-' + id).classList.add('active-link');
-            if(id === 'history') updateHistory();
+            document.getElementById('n-' + id).classList.add('active-nav');
+            if(id === 'history') renderHistory();
         }
 
-        function editProduct(id) {
-            let p = id ? storage.products.find(x => x.id === id) : { name: "", lordo: 0, profit: 0, img: IMG_DEFAULT };
-            
-            let name = prompt("Nome Modello:", p.name);
+        function addArticle() {
+            let name = prompt("Nome scarpa:");
             if(!name) return;
-            let lordo = prompt("Prezzo Vendita (€):", p.lordo);
-            let profit = prompt("Profitto (€):", p.profit);
-
-            if(confirm("Vuoi mettere una foto?")) {
-                let input = document.createElement('input');
-                input.type = 'file'; input.accept = 'image/*';
-                input.onchange = e => {
-                    let r = new FileReader();
-                    r.onload = () => saveAndRender(id, name, lordo, profit, r.result);
-                    r.readAsDataURL(e.target.files[0]);
+            let l = prompt("Prezzo Vendita (€):", "300");
+            let p = prompt("Profitto (€):", "100");
+            
+            let input = document.createElement('input');
+            input.type = 'file'; input.accept = 'image/*';
+            input.onchange = e => {
+                let r = new FileReader();
+                r.onload = () => {
+                    db.items.push({ id: Date.now(), name, l: parseFloat(l), p: parseFloat(p), img: r.result });
+                    save();
                 };
-                input.click();
-            } else {
-                saveAndRender(id, name, lordo, profit, p.img);
-            }
+                r.readAsDataURL(e.target.files[0]);
+            };
+            input.click();
         }
 
-        function saveAndRender(id, name, lordo, profit, img) {
-            if(id) {
-                let index = storage.products.findIndex(x => x.id === id);
-                storage.products[index] = { id, name, lordo: parseFloat(lordo), profit: parseFloat(profit), img };
-            } else {
-                storage.products.push({ id: Date.now(), name, lordo: parseFloat(lordo), profit: parseFloat(profit), img });
-            }
-            saveToDisk();
+        function editItem(id) {
+            let item = db.items.find(x => x.id === id);
+            let name = prompt("Modifica Nome:", item.name);
+            if(!name) return;
+            item.name = name;
+            item.l = parseFloat(prompt("Modifica Lordo:", item.l));
+            item.p = parseFloat(prompt("Modifica Profitto:", item.p));
+            save();
+        }
+
+        function sell(id) {
+            let item = db.items.find(x => x.id === id);
+            let cl = prompt("Cliente per " + item.name + ":");
+            if(!cl) return;
+            db.sales.push({ name: item.name, cl, p: item.p, l: item.l, img: item.img, d: new Date().toLocaleDateString() });
+            save();
+            alert("Vendita registrata!");
+        }
+
+        function save() {
+            localStorage.setItem(KEY, JSON.stringify(db));
             renderHome();
-        }
-
-        function saveToDisk() {
-            localStorage.setItem(DB_KEY, JSON.stringify(storage));
         }
 
         function renderHome() {
             let html = "";
-            storage.products.forEach(p => {
+            db.items.forEach(i => {
                 html += `
                 <div class="btn-wrap">
-                    <div class="edit-badge" onclick="editProduct(${p.id})">✎</div>
-                    <div class="btn" onclick="registerSale(${p.id})">
-                        <img src="${p.img}">
-                        <b>${p.name}</b>
-                        <span>+${p.profit}€</span>
+                    <div class="edit-badge" onclick="editItem(${i.id})">✎</div>
+                    <div class="btn" onclick="sell(${i.id})">
+                        <img src="${i.img}">
+                        <b>${i.name}</b>
+                        <span>+${i.p}€</span>
                     </div>
                 </div>`;
             });
             document.getElementById('mainGrid').innerHTML = html;
-            updateUI();
+            updateStats();
         }
 
-        function registerSale(prodId) {
-            let p = storage.products.find(x => x.id === prodId);
-            let cl = prompt("Nome Cliente per " + p.name + ":");
-            if(!cl) return;
-            
-            storage.sales.push({ 
-                name: p.name, 
-                cl: cl, 
-                p: p.profit, 
-                l: p.lordo,
-                img: p.img, 
-                date: new Date().toLocaleDateString() 
-            });
-            saveToDisk();
-            updateUI();
-            alert("Vendita salvata!");
-        }
-
-        function updateUI() {
-            let totalL = storage.sales.reduce((a, b) => a + b.l, 0);
-            let totalP = storage.sales.reduce((a, b) => a + b.p, 0);
+        function updateStats() {
+            let totalL = db.sales.reduce((a, b) => a + b.l, 0);
+            let totalP = db.sales.reduce((a, b) => a + b.p, 0);
             document.getElementById('tLordo').innerText = totalL + "€";
             document.getElementById('tProfit').innerText = totalP + "€";
         }
 
-        function updateHistory() {
+        function renderHistory() {
             let html = "";
-            storage.sales.slice().reverse().forEach(s => {
+            db.sales.slice().reverse().forEach(s => {
                 html += `<div style="background:#121212; padding:10px; border-radius:10px; margin-bottom:10px; display:flex; align-items:center; border:1px solid #222;">
                     <img src="${s.img}" style="width:40px; height:40px; border-radius:5px; object-fit:cover; margin-right:10px;">
-                    <div style="flex:1"><b>${s.cl}</b><br><small style="color:#666">${s.name} - ${s.date}</small></div>
+                    <div style="flex:1"><b>${s.cl}</b><br><small style="color:#666">${s.name}</small></div>
                     <b style="color:var(--green)">+${s.p}€</b>
                 </div>`;
             });
-            document.getElementById('historyContent').innerHTML = html || "Ancora nessuna vendita.";
+            document.getElementById('historyContent').innerHTML = html || "Nessuna vendita.";
         }
 
-        // Avvio
+        function resetAll() {
+            if(confirm("Vuoi cancellare tutto e risolvere i bug?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
         renderHome();
     </script>
 </body>
