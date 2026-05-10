@@ -4,221 +4,212 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>KICKZONELAB ADMIN</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #00e5ff; --bg: #000; --card: #121212; --green: #00ff88; --red: #ff4444; }
+        :root { --accent: #00e5ff; --bg: #000; --green: #00ff88; --red: #ff4444; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background: #000; color: white; padding: 20px 15px; min-height: 100vh; }
         
-        body { font-family: 'Poppins', sans-serif; background: #000; color: white; min-height: 100vh; padding: calc(env(safe-area-inset-top) + 20px) 15px 100px 15px; transition: background 0.4s; }
-        
-        /* SFONDI DINAMICI */
-        body.bg-home { background: #000; }
-        body.bg-goal { background: #001a2e; }
-        body.bg-improve { background: #1a002e; }
-        body.bg-history { background: #1a1a1a; }
-
-        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
-        #splash img { width: 100px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .header h1 { font-family: 'Montserrat'; font-size: 18px; }
-        .menu-icon { width: 30px; height: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+        /* HEADER */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-top: 10px; }
+        .menu-icon { width: 30px; height: 20px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; }
         .menu-icon span { display: block; height: 3px; background: var(--accent); border-radius: 3px; }
 
-        #top-stats { display: flex; gap: 10px; margin-bottom: 20px; }
-        .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 15px; padding: 15px; text-align: center; }
+        /* STATS */
+        .top-stats { display: flex; gap: 10px; margin-bottom: 20px; }
+        .stat-box { flex: 1; background: #111; border: 1px solid #222; border-radius: 15px; padding: 15px; text-align: center; }
         .stat-box b { display: block; font-size: 20px; color: var(--accent); }
         .stat-box span { font-size: 9px; color: #666; font-weight: bold; }
 
-        #side-menu { position: fixed; top: 0; right: -100%; width: 80%; height: 100%; background: #0a0a0a; z-index: 1000; transition: 0.4s; padding: 60px 30px; border-left: 1px solid #222; }
-        #side-menu.open { right: 0; }
-        .menu-link { display: block; color: white; font-size: 20px; font-weight: bold; margin-bottom: 25px; text-decoration: none; font-family: 'Montserrat'; }
-
+        /* GRID */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn-wrap { position: relative; background: var(--card); border-radius: 15px; border: 1px solid #222; overflow: hidden; }
-        .btn-wrap img { width: 100%; height: 120px; object-fit: contain; background: #1a1a1a; padding: 10px; }
-        .btn-info { padding: 10px; text-align: center; }
-        .btn-info b { font-size: 11px; display: block; text-transform: uppercase; margin-bottom: 4px; }
-        .del-item { position: absolute; top: 5px; right: 5px; background: var(--red); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid #000; z-index: 2; }
+        .card { background: #111; border-radius: 15px; border: 1px solid #222; overflow: hidden; position: relative; }
+        .card img { width: 100%; height: 120px; object-fit: contain; background: #0a0a0a; padding: 10px; }
+        .card-info { padding: 10px; text-align: center; }
+        .del { position: absolute; top: 5px; right: 5px; background: var(--red); color: white; width: 22px; height: 22px; border-radius: 50%; text-align: center; line-height: 20px; font-weight: bold; border: 1px solid #000; }
 
+        /* MENU LATERALE */
+        #menu { position: fixed; top: 0; right: -100%; width: 80%; height: 100%; background: #050505; z-index: 1000; transition: 0.3s; padding: 50px 30px; border-left: 1px solid #222; }
+        #menu.open { right: 0; }
+        .nav-link { display: block; color: white; font-size: 20px; margin-bottom: 25px; text-decoration: none; font-family: 'Montserrat'; }
+
+        /* PAGINE */
         .page { display: none; }
         .page.active { display: block; }
-        .add-btn { background: var(--accent); color: #000; padding: 15px; border-radius: 15px; text-align: center; font-weight: 800; margin-top: 20px; }
+        .btn-add { background: var(--accent); color: #000; padding: 15px; border-radius: 15px; text-align: center; font-weight: bold; margin-top: 20px; }
 
-        .todo-item { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; border: 1px solid #222; }
-        .checkbox { width: 22px; height: 22px; border: 2px solid var(--accent); border-radius: 50%; }
-        .todo-item.done { border-color: var(--green); opacity: 0.5; }
-        .todo-item.done .checkbox { background: var(--green); border-color: var(--green); }
+        /* TODO LIST */
+        .todo { background: #111; padding: 15px; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #222; }
+        .todo.done { border-color: var(--green); opacity: 0.5; text-decoration: line-through; }
+        .check { width: 20px; height: 20px; border: 2px solid var(--accent); border-radius: 50%; margin-right: 10px; }
+        .todo.done .check { background: var(--green); border-color: var(--green); }
 
-        .goal-bar { width: 100%; height: 12px; background: #222; border-radius: 10px; margin: 20px 0; overflow: hidden; }
-        #progress { height: 100%; background: var(--accent); width: 0%; transition: 1s; }
+        /* GOAL */
+        .bar-bg { width: 100%; height: 12px; background: #222; border-radius: 10px; margin: 15px 0; }
+        #bar-fill { height: 100%; background: var(--accent); width: 0%; transition: 0.5s; }
     </style>
 </head>
-<body class="bg-home">
-
-    <div id="splash">
-        <img src="logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2742/2742674.png'">
-        <p style="margin-top:20px; font-family:'Montserrat'; color:var(--accent); font-size:10px; padding: 0 40px; text-align:center;">DIVENTA COSÌ RICCO DA NON GUARDARE IL PREZZO</p>
-    </div>
-
-    <div id="side-menu">
-        <div onclick="toggleMenu()" style="text-align:right; font-size:30px; margin-bottom:30px;">×</div>
-        <a href="#" class="menu-link" onclick="showPage('home')">HOME</a>
-        <a href="#" class="menu-link" onclick="showPage('history')">STORICO</a>
-        <a href="#" class="menu-link" onclick="showPage('goal')">OBIETTIVI</a>
-        <a href="#" class="menu-link" onclick="showPage('improve')">AZIENDA</a>
-        <button onclick="localStorage.clear(); location.reload();" style="color:red; background:none; border:none; margin-top:50px;">RESET TOTALE</button>
-    </div>
+<body>
 
     <div class="header">
-        <h1 id="page-title">KICKZONELAB</h1>
+        <h1 style="font-family:'Montserrat'; font-size:16px;">KICKZONELAB</h1>
         <div class="menu-icon" onclick="toggleMenu()"><span></span><span></span><span></span></div>
     </div>
 
-    <div id="top-stats">
-        <div class="stat-box"><b id="tLordo">0€</b><span>LORDO</span></div>
-        <div class="stat-box"><b id="tProfit" style="color:var(--green)">0€</b><span>PROFITTO</span></div>
+    <div id="stats-header" class="top-stats">
+        <div class="stat-box"><b id="val-lordo">0€</b><span>LORDO</span></div>
+        <div class="stat-box"><b id="val-profit" style="color:var(--green)">0€</b><span>PROFITTO</span></div>
     </div>
 
-    <div id="p-home" class="page active">
-        <div class="grid" id="mainGrid"></div>
-        <div class="add-btn" onclick="addArticle()">+ AGGIUNGI ARTICOLO</div>
+    <div id="home" class="page active">
+        <div class="grid" id="grid-main"></div>
+        <div class="btn-add" onclick="aggiungi()">+ AGGIUNGI</div>
+        <button onclick="pulisciTutto()" style="width:100%; background:none; border:none; color:#333; margin-top:30px; font-size:10px;">RESET TOTALE CACHE</button>
     </div>
 
-    <div id="p-goal" class="page">
+    <div id="goal" class="page">
         <h2>OBIETTIVI</h2>
         <div class="stat-box" style="margin-top:20px;">
             <p>TARGET: 1.500€</p>
-            <div class="goal-bar"><div id="progress"></div></div>
-            <p id="goalText">0%</p>
+            <div class="bar-bg"><div id="bar-fill"></div></div>
+            <p id="txt-goal">0%</p>
         </div>
     </div>
 
-    <div id="p-improve" class="page">
+    <div id="improve" class="page">
         <h2>AZIENDA</h2>
-        <div id="improveList"></div>
-        <div class="add-btn" onclick="addImprovement()">+ NUOVO OBIETTIVO</div>
+        <div id="list-improve" style="margin-top:20px;"></div>
+        <div class="btn-add" onclick="nuovoGoal()">+ OBIETTIVO</div>
     </div>
 
-    <div id="p-history" class="page">
-        <h2>STORICO</h2>
-        <div id="historyList"></div>
+    <div id="history" class="page">
+        <h2>STORICO VENDITE</h2>
+        <div id="list-history" style="margin-top:20px;"></div>
+    </div>
+
+    <div id="menu">
+        <div onclick="toggleMenu()" style="font-size:30px; margin-bottom:30px;">×</div>
+        <a href="#" class="nav-link" onclick="vaiA('home')">HOME</a>
+        <a href="#" class="nav-link" onclick="vaiA('history')">STORICO</a>
+        <a href="#" class="nav-link" onclick="vaiA('goal')">OBIETTIVI</a>
+        <a href="#" class="nav-link" onclick="vaiA('improve')">AZIENDA</a>
     </div>
 
     <script>
-        // CHIAVE FISSA PER NON PERDERE DATI
-        const KEY = 'KICKZONE_FINAL_DATA';
-        let db = JSON.parse(localStorage.getItem(KEY)) || { items: [], sales: [], improvements: [] };
+        const DB_NAME = 'KZL_FINAL_STORAGE';
+        let dati = JSON.parse(localStorage.getItem(DB_NAME)) || { scarpe: [], vendite: [], task: [] };
 
-        window.onload = () => {
-            setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 2000);
-            renderHome();
-        };
-
-        function toggleMenu() { document.getElementById('side-menu').classList.toggle('open'); }
-
-        function showPage(id) {
-            document.body.className = 'bg-' + id;
-            document.getElementById('top-stats').style.display = (id === 'home') ? 'flex' : 'none';
-            document.getElementById('page-title').innerText = (id === 'home') ? 'KICKZONELAB' : id.toUpperCase();
+        function vaiA(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('p-' + id).classList.add('active');
-            if(id === 'goal') updateGoal();
-            if(id === 'improve') renderImprove();
-            if(id === 'history') renderHistory();
+            document.getElementById(id).classList.add('active');
+            document.getElementById('stats-header').style.display = (id === 'home') ? 'flex' : 'none';
+            if(id === 'goal') aggiornaGoal();
+            if(id === 'improve') renderingTask();
+            if(id === 'history') renderingHistory();
             toggleMenu();
         }
 
-        function save() { 
-            localStorage.setItem(KEY, JSON.stringify(db)); 
-            renderHome(); 
+        function toggleMenu() { document.getElementById('menu').classList.toggle('open'); }
+
+        function salva() {
+            try {
+                localStorage.setItem(DB_NAME, JSON.stringify(dati));
+                renderingHome();
+            } catch(e) {
+                alert("Memoria piena! Elimina qualche vecchia vendita o scarpa.");
+            }
         }
 
-        function addArticle() {
-            let name = prompt("Modello:"); if(!name) return;
+        function aggiungi() {
+            let n = prompt("Nome scarpa:"); if(!n) return;
             let l = prompt("Lordo:"); let p = prompt("Profitto:");
-            let input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
-            input.onchange = e => {
-                let r = new FileReader();
-                r.onload = ev => {
+            let fileInput = document.createElement('input');
+            fileInput.type = 'file'; fileInput.accept = 'image/*';
+            fileInput.onchange = e => {
+                let reader = new FileReader();
+                reader.onload = ev => {
                     let img = new Image();
                     img.onload = () => {
                         let canvas = document.createElement('canvas');
                         let ctx = canvas.getContext('2d');
-                        canvas.width = 300; canvas.height = 300; // IMMAGINE PICCOLA PER NON BLOCCARE MEMORIA
-                        ctx.drawImage(img, 0, 0, 300, 300);
-                        db.items.push({ id: Date.now(), name, l: parseFloat(l), p: parseFloat(p), img: canvas.toDataURL('image/jpeg', 0.6) });
-                        save();
+                        canvas.width = 250; canvas.height = 250; // MOLTO PICCOLA PER EVITARE CRASH
+                        ctx.drawImage(img, 0, 0, 250, 250);
+                        dati.scarpe.push({ id: Date.now(), n, l: parseFloat(l), p: parseFloat(p), img: canvas.toDataURL('image/jpeg', 0.5) });
+                        salva();
                     };
                     img.src = ev.target.result;
                 };
-                r.readAsDataURL(e.target.files[0]);
+                reader.readAsDataURL(e.target.files[0]);
             };
-            input.click();
+            fileInput.click();
         }
 
-        function renderHome() {
-            let grid = document.getElementById('mainGrid');
-            grid.innerHTML = db.items.map(i => `
-                <div class="btn-wrap">
-                    <div class="del-item" onclick="deleteItem(${i.id})">×</div>
-                    <div onclick="sell(${i.id})">
-                        <img src="${i.img}">
-                        <div class="btn-info">
-                            <b>${i.name}</b>
-                            <span style="color:var(--green); font-weight:bold;">+${i.p}€</span>
-                        </div>
+        function vendi(id) {
+            let s = dati.scarpe.find(x => x.id === id);
+            dati.vendite.push({ n: s.n, p: s.p, l: s.l, data: new Date().toLocaleDateString() });
+            salva();
+            alert("VENDUTA!");
+        }
+
+        function elimina(id) {
+            if(confirm("Eliminare?")) { dati.scarpe = dati.scarpe.filter(x => x.id !== id); salva(); }
+        }
+
+        function renderingHome() {
+            let g = document.getElementById('grid-main');
+            g.innerHTML = dati.scarpe.map(s => `
+                <div class="card">
+                    <div class="del" onclick="elimina(${s.id})">×</div>
+                    <div onclick="vendi(${s.id})">
+                        <img src="${s.img}">
+                        <div class="card-info"><b>${s.n}</b><br><span style="color:var(--green)">+${s.p}€</span></div>
                     </div>
                 </div>
             `).join('');
-            updateStats();
+            
+            let tL = dati.vendite.reduce((a,b) => a + (b.l || 0), 0);
+            let tP = dati.vendite.reduce((a,b) => a + (b.p || 0), 0);
+            document.getElementById('val-lordo').innerText = tL + "€";
+            document.getElementById('val-profit').innerText = tP + "€";
         }
 
-        function deleteItem(id) { if(confirm("Elimina?")) { db.items = db.items.filter(x=>x.id!==id); save(); } }
-
-        function sell(id) {
-            let i = db.items.find(x => x.id === id);
-            db.sales.push({ name: i.name, p: i.p, l: i.l, d: new Date().toLocaleDateString() });
-            save(); alert("VENDUTO!");
-        }
-
-        function updateStats() {
-            let tL = db.sales.reduce((a,b)=> a+(b.l||0), 0);
-            let tP = db.sales.reduce((a,b)=> a+(b.p||0), 0);
-            document.getElementById('tLordo').innerText = tL+"€";
-            document.getElementById('tProfit').innerText = tP+"€";
-        }
-
-        function updateGoal() {
-            let t = 1500; let c = db.sales.reduce((a,b)=> a+(b.p||0), 0);
+        function aggiornaGoal() {
+            let t = 1500; let c = dati.vendite.reduce((a,b) => a + (b.p || 0), 0);
             let p = Math.min((c/t)*100, 100);
-            document.getElementById('progress').style.width = p + "%";
-            document.getElementById('goalText').innerText = Math.floor(p) + "% (" + c + "€ / " + t + "€)";
+            document.getElementById('bar-fill').style.width = p + "%";
+            document.getElementById('txt-goal').innerText = Math.floor(p) + "% (" + c + "€ / " + t + "€)";
         }
 
-        function addImprovement() {
-            let t = prompt("Obiettivo:");
-            if(t) { db.improvements.push({ text: t, done: false }); save(); renderImprove(); }
+        function nuovoGoal() {
+            let t = prompt("Cosa vuoi migliorare?");
+            if(t) { dati.task.push({ t, d: false }); salva(); renderingTask(); }
         }
 
-        function renderImprove() {
-            document.getElementById('improveList').innerHTML = db.improvements.map((t, i) => `
-                <div class="todo-item ${t.done ? 'done' : ''}" onclick="db.improvements[${i}].done=!db.improvements[${i}].done; save(); renderImprove();">
-                    <div class="checkbox"></div>
-                    <span style="flex:1">${t.text}</span>
-                    <div onclick="event.stopPropagation(); db.improvements.splice(${i},1); save(); renderImprove();">×</div>
+        function renderingTask() {
+            document.getElementById('list-improve').innerHTML = dati.task.map((x, i) => `
+                <div class="todo ${x.d ? 'done' : ''}" onclick="dati.task[${i}].d=!dati.task[${i}].d; salva(); renderingTask();">
+                    <div class="check"></div><span>${x.t}</span>
+                    <div style="margin-left:auto" onclick="event.stopPropagation(); dati.task.splice(${i},1); salva(); renderingTask();">×</div>
                 </div>
             `).join('');
         }
 
-        function renderHistory() {
-            document.getElementById('historyList').innerHTML = db.sales.slice().reverse().map(s => `
-                <div class="todo-item"><b>${s.name}</b> <span style="margin-left:auto; color:var(--green);">+${s.p}€</span></div>
+        function renderingHistory() {
+            document.getElementById('list-history').innerHTML = dati.vendite.slice().reverse().map(v => `
+                <div class="todo"><b>${v.n}</b> <span style="margin-left:auto; color:var(--green)">+${v.p}€</span></div>
             `).join('');
         }
+
+        function pulisciTutto() {
+            if(confirm("Questo cancellerà TUTTO il database. Sei sicuro?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // Avvio
+        renderingHome();
     </script>
 </body>
 </html>
