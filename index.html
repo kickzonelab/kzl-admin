@@ -20,7 +20,7 @@
             font-family: 'Poppins', sans-serif; 
             background: var(--bg); 
             color: white; 
-            padding: calc(env(safe-area-inset-top) + 35px) 15px 100px 15px; 
+            padding: calc(env(safe-area-inset-top) + 20px) 15px 100px 15px; 
         }
 
         .header { 
@@ -60,7 +60,7 @@
 
         .btn.special { 
             grid-column: span 2; 
-            background: #111;
+            background: linear-gradient(145deg, #111, #050505);
             border: 1px dashed var(--accent); 
             padding: 25px; 
             margin-top: 15px; 
@@ -90,10 +90,14 @@
         .nav-item { font-size: 11px; color: #555; text-decoration: none; font-weight: bold; }
         .nav-item.active-nav { color: var(--accent); }
 
+        /* Stile Storico */
         .hist-card { background: #121212; padding: 15px; border-radius: 18px; margin-bottom: 12px; display: flex; align-items: center; border: 1px solid #222; }
         .hist-card img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; margin-right: 15px; }
+        .hist-price { color: var(--green); font-weight: bold; }
 
-        .debug-reset { text-align: center; margin-top: 50px; font-size: 10px; color: #333; }
+        /* Tasti Sync in fondo */
+        .sync-area { margin-top: 50px; text-align: center; padding-bottom: 20px; display: flex; gap: 10px; justify-content: center; }
+        .sync-btn { font-size: 10px; padding: 8px 15px; border-radius: 10px; border: 1px solid #333; color: #666; background: #050505; }
     </style>
 </head>
 <body>
@@ -111,7 +115,11 @@
     <div id="p-home" class="page active">
         <div class="grid" id="mainGrid"></div>
         <div class="btn special" onclick="addArticle()">➕ AGGIUNGI ARTICOLO</div>
-        <div class="debug-reset" onclick="resetAll()">RESET DATABASE</div>
+        
+        <div class="sync-area">
+            <div class="sync-btn" onclick="exportDB()">📤 ESPORTA MEMORIA (da Mac)</div>
+            <div class="sync-btn" onclick="importDB()">📥 IMPORTA MEMORIA (su Tel)</div>
+        </div>
     </div>
 
     <div id="p-history" class="page">
@@ -125,7 +133,7 @@
     </nav>
 
     <script>
-        const KEY = 'KZL_MASTER_V2';
+        const KEY = 'KZL_MASTER_V3';
         const DEFAULT_IMG = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop";
 
         let db = JSON.parse(localStorage.getItem(KEY)) || {
@@ -206,7 +214,7 @@
             db.items.forEach(i => {
                 html += `
                 <div class="btn-wrap">
-                    <div class="edit-badge" onclick="event.stopPropagation(); editItem(${i.id})">✎</div>
+                    <div class="edit-badge" onclick="editProductPhoto(${i.id})">📸</div>
                     <div class="btn" onclick="sell(${i.id})">
                         <img src="${i.img}">
                         <b>${i.name}</b>
@@ -216,6 +224,38 @@
             });
             document.getElementById('mainGrid').innerHTML = html;
             updateStats();
+        }
+        
+        // Modifica rapida solo foto
+        function editProductPhoto(id) {
+            let i = db.items.find(x => x.id === id);
+            if(!confirm("Vuoi cambiare la foto a "+i.name+"?")) {
+                editItem(id); // Se annulla foto, apre modifica testo
+                return;
+            }
+            let input = document.createElement('input');
+            input.type = 'file'; input.accept = 'image/*';
+            input.onchange = e => {
+                let file = e.target.files[0];
+                let reader = new FileReader();
+                reader.onload = (ev) => {
+                    let img = new Image();
+                    img.onload = () => {
+                        let canvas = document.createElement('canvas');
+                        let max_size = 400; 
+                        let width = img.width; let height = img.height;
+                        if (width > height) { if (width > max_size) { height *= max_size / width; width = max_size; } }
+                        else { if (height > max_size) { width *= max_size / height; height = max_size; } }
+                        canvas.width = width; canvas.height = height;
+                        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                        i.img = canvas.toDataURL('image/jpeg', 0.6);
+                        save();
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            };
+            input.click();
         }
 
         function updateStats() {
@@ -237,11 +277,36 @@
             document.getElementById('historyContent').innerHTML = html || "<p style='text-align:center; color:#333;'>Nessuna vendita</p>";
         }
 
-        function resetAll() {
-            if(confirm("Cancella tutto?")) {
-                localStorage.clear();
-                location.reload();
-            }
+        // --- FUNZIONI DI SINCRONIZZAZIONE ---
+        function exportDB() {
+            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+            let downNode = document.createElement('a');
+            downNode.setAttribute("href", dataStr);
+            downNode.setAttribute("download", "kickzone_backup_" + new Date().toLocaleDateString('it-IT') + ".json");
+            document.body.appendChild(downNode);
+            downNode.click();
+            downNode.remove();
+        }
+
+        function importDB() {
+            if(!confirm("Stai per sovrascrivere la memoria del telefono con il file del Mac. Procedere?")) return;
+            let input = document.createElement('input');
+            input.type = 'file'; input.accept = '.json';
+            input.onchange = e => {
+                let file = e.target.files[0];
+                let reader = new FileReader();
+                reader.onload = (ev) => {
+                    try {
+                        db = JSON.parse(ev.target.result);
+                        save();
+                        alert("Sincronizzazione completata! Dati aggiornati.");
+                    } catch(err) {
+                        alert("File non valido.");
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
         }
 
         renderHome();
