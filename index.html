@@ -9,77 +9,91 @@
     <title>KICKZONELAB ADMIN</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #00e5ff; --bg: #000; --card: #121212; --green: #00ff88; }
+        :root { --accent: #00e5ff; --bg: #000; --card: #121212; --green: #00ff88; --red: #ff4444; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background: var(--bg); 
-            color: white; 
-            padding: calc(env(safe-area-inset-top) + 40px) 15px 120px 15px; 
-        }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; padding: calc(env(safe-area-inset-top) + 20px) 15px 50px 15px; }
 
         /* SPLASH SCREEN */
-        #splash {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 9999; transition: 0.8s;
-        }
+        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: 0.8s; }
         #splash img { width: 100px; animation: pulse 2s infinite; margin-bottom: 20px; }
-        #quote { font-family: 'Montserrat'; font-size: 12px; text-align: center; color: var(--accent); padding: 0 40px; text-transform: uppercase; letter-spacing: 1px; }
+        #quote { font-family: 'Montserrat'; font-size: 11px; text-align: center; color: var(--accent); padding: 0 40px; text-transform: uppercase; }
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.1); opacity: 1; } }
 
-        /* HEADER */
-        .header { text-align: left; margin-bottom: 30px; }
-        .header h1 { font-family: 'Montserrat'; font-size: 18px; letter-spacing: 3px; }
+        /* HEADER & MENU */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-top: 10px; }
+        .header h1 { font-family: 'Montserrat'; font-size: 18px; letter-spacing: 2px; }
+        
+        .menu-icon { width: 30px; height: 20px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; }
+        .menu-icon span { display: block; height: 3px; width: 100%; background: var(--accent); border-radius: 3px; }
+
+        /* SIDE MENU */
+        #side-menu { position: fixed; top: 0; right: -100%; width: 80%; height: 100%; background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(15px); z-index: 1000; transition: 0.4s; padding: 60px 30px; border-left: 1px solid #222; }
+        #side-menu.open { right: 0; }
+        .menu-link { display: block; color: white; font-size: 18px; font-weight: bold; margin-bottom: 25px; text-decoration: none; font-family: 'Montserrat'; }
+        .menu-link.active { color: var(--accent); }
+        .close-menu { position: absolute; top: 25px; right: 25px; font-size: 30px; color: var(--accent); }
 
         /* STATS */
-        .top-stats { display: flex; gap: 10px; margin-bottom: 30px; }
-        .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 20px; padding: 20px 10px; text-align: center; }
-        .stat-box b { display: block; font-size: 24px; color: var(--accent); }
-        .stat-box span { font-size: 9px; color: #666; font-weight: 800; letter-spacing: 1px; }
+        .top-stats { display: flex; gap: 10px; margin-bottom: 20px; }
+        .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 20px; padding: 18px 10px; text-align: center; }
+        .stat-box b { display: block; font-size: 22px; color: var(--accent); }
+        .stat-box span { font-size: 9px; color: #666; font-weight: 800; }
 
-        /* GRID */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        /* GRID HOME */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .btn-wrap { position: relative; }
-        .btn { background: var(--card); border: 1px solid #222; border-radius: 22px; text-align: center; overflow: hidden; padding-bottom: 15px; }
-        .btn img { width: 100%; height: 120px; object-fit: contain; padding: 10px; background: #181818; }
-        .btn b { display: block; font-size: 12px; padding: 10px 5px 2px; }
-        .btn span { font-size: 10px; color: var(--green); font-weight: bold; }
-        
-        .del-btn { position: absolute; top: 8px; right: 8px; background: #ff4444; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; z-index: 5; border: 2px solid #000; }
+        .btn { background: var(--card); border: 1px solid #222; border-radius: 20px; text-align: center; overflow: hidden; padding-bottom: 12px; }
+        .btn img { width: 100%; height: 110px; object-fit: contain; padding: 10px; }
+        .del-item { position: absolute; top: 5px; right: 5px; background: var(--red); color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 2px solid #000; }
 
-        .add-btn { grid-column: span 2; background: #111; border: 1px dashed var(--accent); padding: 25px; margin-top: 10px; border-radius: 22px; color: var(--accent); text-align: center; font-weight: bold; font-size: 14px; }
+        .add-btn { background: #111; border: 1px dashed var(--accent); padding: 20px; border-radius: 20px; color: var(--accent); text-align: center; font-weight: bold; margin-top: 10px; cursor: pointer; }
 
-        /* REFRESH IN FONDO */
-        .refresh-area { grid-column: span 2; margin-top: 20px; text-align: center; }
-        .big-refresh { background: rgba(0, 229, 255, 0.1); color: var(--accent); border: 1px solid var(--accent); padding: 15px; border-radius: 15px; font-weight: bold; font-size: 12px; width: 100%; }
-
-        /* RANKING ITEMS */
-        .rank-card { background: var(--card); padding: 15px; border-radius: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
-        .rank-info b { font-size: 14px; }
-        .rank-info small { color: #555; display: block; }
-        .rank-val { color: var(--accent); font-weight: bold; }
-
-        /* NAV */
+        /* SEZIONI */
         .page { display: none; }
-        .active { display: block; }
-        #nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 20px 10px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #222; z-index: 100; }
-        .nav-item { font-size: 10px; color: #444; text-decoration: none; font-weight: bold; letter-spacing: 1px; }
-        .nav-item.active-nav { color: var(--accent); }
+        .page.active { display: block; }
+        h2 { font-family: 'Montserrat'; font-size: 20px; margin-bottom: 20px; color: var(--accent); }
 
-        .sync-buttons { margin-top: 40px; display: flex; gap: 10px; justify-content: center; opacity: 0.3; }
-        .sync-buttons button { background: none; border: 1px solid #333; color: #666; font-size: 8px; padding: 5px 10px; border-radius: 5px; }
+        /* IMPROVEMENT LIST (TIC VERDE) */
+        .todo-item { background: var(--card); padding: 18px; border-radius: 15px; border: 1px solid #222; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
+        .checkbox { width: 24px; height: 24px; border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .todo-item.done { opacity: 0.5; border-color: var(--green); }
+        .todo-item.done .checkbox { background: var(--green); border-color: var(--green); }
+        .todo-item.done .checkbox::after { content: '✓'; color: #000; font-weight: bold; font-size: 14px; }
+        .todo-item.done span { text-decoration: line-through; color: #666; }
+
+        /* GOAL BAR */
+        .goal-container { background: #111; border: 1px solid #222; border-radius: 15px; padding: 20px; }
+        .goal-bar { width: 100%; height: 12px; background: #222; border-radius: 10px; margin: 10px 0; overflow: hidden; }
+        #progress { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); width: 0%; transition: 1s; }
+
+        .refresh-btn { margin-top: 40px; width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--accent); background: none; color: var(--accent); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="splash">
         <img src="logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2742/2742674.png'">
-        <div id="quote">WORK IN SILENCE</div>
+        <div id="quote">KICKZONELAB: GROW YOUR EMPIRE</div>
     </div>
 
-    <div class="header"><h1>KICKZONELAB</h1></div>
+    <div id="side-menu">
+        <div class="close-menu" onclick="toggleMenu()">×</div>
+        <a href="#" class="menu-link active" onclick="showPage('home')">HOME</a>
+        <a href="#" class="menu-link" onclick="showPage('history')">STORICO</a>
+        <a href="#" class="menu-link" onclick="showPage('goal')">OBIETTIVI</a>
+        <a href="#" class="menu-link" onclick="showPage('improve')">MIGLIORA AZIENDA</a>
+        <div style="margin-top: 50px;">
+            <button onclick="exportDB()" style="color:#555; background:none; border:none; font-size:10px;">Esporta Backup</button>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>KICKZONELAB</h1>
+        <div class="menu-icon" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
 
     <div class="top-stats">
         <div class="stat-box"><b id="tLordo">0€</b><span>LORDO</span></div>
@@ -88,167 +102,119 @@
 
     <div id="p-home" class="page active">
         <div class="grid" id="mainGrid"></div>
-        <div class="grid" style="margin-top:15px;">
-            <div class="add-btn" onclick="addArticle()">➕ AGGIUNGI ARTICOLO</div>
-            <div class="refresh-area">
-                <button class="big-refresh" onclick="hardRefresh()">AGGIORNA APP (REFRESH ↻)</button>
-            </div>
+        <div class="add-btn" onclick="addArticle()">➕ AGGIUNGI ARTICOLO</div>
+        <button class="refresh-btn" onclick="location.reload()">REFRESH APP ↻</button>
+    </div>
+
+    <div id="p-goal" class="page">
+        <h2>OBIETTIVI PROFITTO</h2>
+        <div class="goal-container">
+            <p style="font-size:12px; color:#666;">TARGET MENSILE: <b>1.500€</b></p>
+            <div class="goal-bar"><div id="progress"></div></div>
+            <p id="goalText" style="font-size:14px; font-weight:bold;"></p>
         </div>
-        <div class="sync-buttons">
-            <button onclick="exportDB()">EXPORT JSON</button>
-            <button onclick="importDB()">IMPORT JSON</button>
-        </div>
     </div>
 
-    <div id="p-history" class="page">
-        <h2 style="font-size:16px; margin-bottom:20px; font-family:'Montserrat';">STORICO VENDITE</h2>
-        <div id="historyContent"></div>
+    <div id="p-improve" class="page">
+        <h2>MIGLIORA AZIENDA</h2>
+        <div id="improveList"></div>
+        <div class="add-btn" onclick="addImprovement()">+ AGGIUNGI OBIETTIVO AZIENDALE</div>
     </div>
-
-    <div id="p-rank" class="page">
-        <h2 style="font-size:16px; margin-bottom:20px; font-family:'Montserrat';">RANKING</h2>
-        <h3 style="font-size:10px; color:#555; margin-bottom:10px; text-transform:uppercase;">Top Clienti</h3>
-        <div id="rankClients"></div>
-        <h3 style="font-size:10px; color:#555; margin-top:20px; margin-bottom:10px; text-transform:uppercase;">Modelli Caldi</h3>
-        <div id="rankModels"></div>
-    </div>
-
-    <nav id="nav">
-        <a href="#" class="nav-item active-nav" id="n-home" onclick="showP('home')">HOME</a>
-        <a href="#" class="nav-item" id="n-history" onclick="showP('history')">STORICO</a>
-        <a href="#" class="nav-item" id="n-rank" onclick="showP('rank')">RANKING</a>
-    </nav>
 
     <script>
-        const KEY = 'KZL_MASTER_V5';
-        const quotes = [
-            "SOLO CHI RISCHIA DI ANDARE TROPPO LONTANO SCOPRE DOVE PUÒ ARRIVARE.",
-            "NON CONTA LA SCARPA, MA IL PASSO DI CHI LA INDOSSA.",
-            "OGNI VENDITA È UN MATTONE PER IL TUO IMPERO.",
-            "LAVORA FINCHÉ IL TUO CONTO NON SEMBRA UN NUMERO DI TELEFONO.",
-            "IL SUCCESSO È L'UNICA OPZIONE.",
-            "KICKZONELAB: STEP INTO THE FUTURE."
-        ];
-
-        let db = JSON.parse(localStorage.getItem(KEY)) || { items: [], sales: [] };
+        const KEY = 'KZL_V7_FINAL';
+        let db = JSON.parse(localStorage.getItem(KEY)) || { items: [], sales: [], improvements: [] };
 
         window.onload = () => {
-            const day = new Date().getDate();
-            document.getElementById('quote').innerText = quotes[day % quotes.length];
-            setTimeout(() => {
-                document.getElementById('splash').style.opacity = '0';
-                setTimeout(() => document.getElementById('splash').style.display = 'none', 800);
-            }, 2200);
+            setTimeout(() => { document.getElementById('splash').style.opacity = '0'; setTimeout(()=> document.getElementById('splash').style.display='none', 800); }, 2000);
             renderHome();
         };
 
-        function hardRefresh() { window.location.href = window.location.pathname + '?v=' + Date.now(); }
-        function save() { localStorage.setItem(KEY, JSON.stringify(db)); renderHome(); }
+        function toggleMenu() { document.getElementById('side-menu').classList.toggle('open'); }
 
-        function showP(id) {
+        function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
+            document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
             document.getElementById('p-' + id).classList.add('active');
-            document.getElementById('n-' + id).classList.add('active-nav');
-            if(id === 'history') renderHistory();
-            if(id === 'rank') renderRank();
-            window.scrollTo(0,0);
+            toggleMenu();
+            if(id==='goal') updateGoal();
+            if(id==='improve') renderImprovements();
         }
 
+        function save() { localStorage.setItem(KEY, JSON.stringify(db)); renderHome(); }
+
         function addArticle() {
-            let name = prompt("Modello:"); if(!name) return;
-            let l = prompt("Lordo (€):", "300");
-            let p = prompt("Profitto (€):", "100");
-            let input = document.createElement('input');
-            input.type = 'file'; input.accept = 'image/*';
+            let name = prompt("Nome Scarpa:"); if(!name) return;
+            let l = prompt("Lordo:"); let p = prompt("Profitto:");
+            let input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
             input.onchange = e => {
-                let reader = new FileReader();
-                reader.onload = ev => {
-                    let img = new Image();
-                    img.onload = () => {
-                        let canvas = document.createElement('canvas');
-                        let max = 400; let w = img.width; let h = img.height;
-                        if (w > h) { if (w > max) { h *= max / w; w = max; } }
-                        else { if (h > max) { w *= max / h; h = max; } }
-                        canvas.width = w; canvas.height = h;
-                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                        db.items.push({ id: Date.now(), name, l: parseFloat(l), p: parseFloat(p), img: canvas.toDataURL('image/jpeg', 0.7) });
-                        save();
-                    };
-                    img.src = ev.target.result;
+                let r = new FileReader();
+                r.onload = ev => {
+                    db.items.push({ id: Date.now(), name, l: parseFloat(l), p: parseFloat(p), img: ev.target.result });
+                    save();
                 };
-                reader.readAsDataURL(e.target.files[0]);
+                r.readAsDataURL(e.target.files[0]);
             };
             input.click();
         }
 
         function sell(id) {
             let i = db.items.find(x => x.id === id);
-            let cl = prompt("Nome Cliente:"); if(!cl) return;
-            db.sales.push({ name: i.name, cl, p: i.p, l: i.l, img: i.img, d: new Date().toLocaleDateString('it-IT') });
-            save();
-            alert("VENDUTO!");
+            db.sales.push({ p: i.p, l: i.l, d: new Date().getMonth() });
+            save(); alert("VENDUTO!");
         }
-
-        function deleteItem(id) { if(confirm("Eliminare?")) { db.items = db.items.filter(x => x.id !== id); save(); } }
 
         function renderHome() {
             let html = "";
             db.items.forEach(i => {
                 html += `<div class="btn-wrap">
-                    <div class="del-btn" onclick="event.stopPropagation(); deleteItem(${i.id})">×</div>
+                    <div class="del-item" onclick="event.stopPropagation(); db.items=db.items.filter(x=>x.id!=${i.id}); save();">×</div>
                     <div class="btn" onclick="sell(${i.id})">
                         <img src="${i.img}">
                         <b>${i.name}</b>
-                        <span>+${i.p}€</span>
+                        <span style="color:var(--green)">+${i.p}€</span>
                     </div>
                 </div>`;
             });
             document.getElementById('mainGrid').innerHTML = html;
-            updateStats();
+            let tL = db.sales.reduce((a,b)=> a+(b.l||0), 0);
+            let tP = db.sales.reduce((a,b)=> a+(b.p||0), 0);
+            document.getElementById('tLordo').innerText = tL+"€";
+            document.getElementById('tProfit').innerText = tP+"€";
         }
 
-        function updateStats() {
-            let tL = db.sales.reduce((a, b) => a + (b.l || 0), 0);
-            let tP = db.sales.reduce((a, b) => a + (b.p || 0), 0);
-            document.getElementById('tLordo').innerText = tL + "€";
-            document.getElementById('tProfit').innerText = tP + "€";
+        function updateGoal() {
+            let target = 1500;
+            let current = db.sales.reduce((a,b)=> a+(b.p||0), 0);
+            let perc = Math.min((current / target) * 100, 100);
+            document.getElementById('progress').style.width = perc + "%";
+            document.getElementById('goalText').innerText = current + "€ / " + target + "€ (" + Math.floor(perc) + "%)";
         }
 
-        function renderHistory() {
-            let html = "";
-            db.sales.slice().reverse().forEach(s => {
-                html += `<div class="rank-card">
-                    <img src="${s.img}" style="width:40px; height:40px; object-fit:cover; border-radius:8px; margin-right:12px;">
-                    <div class="rank-info" style="flex:1"><b>${s.cl}</b><small>${s.name}</small></div>
-                    <div class="rank-val">+${s.p}€</div>
-                </div>`;
-            });
-            document.getElementById('historyContent').innerHTML = html || "Nessun dato.";
+        /* LOGICA MIGLIORAMENTI (TIC VERDE) */
+        function addImprovement() {
+            let task = prompt("Cosa vuoi fare per migliorare l'azienda?");
+            if(task) { db.improvements.push({ text: task, done: false }); save(); renderImprovements(); }
         }
 
-        function renderRank() {
-            let c = {}; let m = {};
-            db.sales.forEach(s => { c[s.cl] = (c[s.cl] || 0) + 1; m[s.name] = (m[s.name] || 0) + 1; });
-            let sortC = Object.entries(c).sort((a,b) => b[1]-a[1]).slice(0,5);
-            let sortM = Object.entries(m).sort((a,b) => b[1]-a[1]).slice(0,5);
-            document.getElementById('rankClients').innerHTML = sortC.map(x => `<div class="rank-card"><b>${x[0]}</b><span>${x[1]} paia</span></div>`).join('');
-            document.getElementById('rankModels').innerHTML = sortM.map(x => `<div class="rank-card"><b>${x[0]}</b><span>${x[1]} venduti</span></div>`).join('');
+        function toggleTask(index) {
+            db.improvements[index].done = !db.improvements[index].done;
+            save(); renderImprovements();
         }
 
-        function exportDB() {
+        function renderImprovements() {
+            document.getElementById('improveList').innerHTML = db.improvements.map((t, i) => `
+                <div class="todo-item ${t.done ? 'done' : ''}" onclick="toggleTask(${i})">
+                    <div class="checkbox"></div>
+                    <span style="flex:1">${t.text}</span>
+                    <div onclick="event.stopPropagation(); db.improvements.splice(${i},1); save(); renderImprovements();" style="color:var(--red); font-size:12px;">X</div>
+                </div>
+            `).join('') || "<p style='color:#444; text-align:center;'>Nessun obiettivo aggiunto.</p>";
+        }
+
+        function exportDB() { 
             let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
             let a = document.createElement('a'); a.href = dataStr; a.download = "kzl_backup.json"; a.click();
-        }
-
-        function importDB() {
-            let i = document.createElement('input'); i.type = 'file';
-            i.onchange = e => {
-                let r = new FileReader();
-                r.onload = ev => { db = JSON.parse(ev.target.result); save(); alert("Dati caricati!"); };
-                r.readAsText(e.target.files[0]);
-            };
-            i.click();
         }
     </script>
 </body>
