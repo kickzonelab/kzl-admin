@@ -8,7 +8,7 @@
     <style>
         :root { --accent: #00e5ff; --bg: #000; --green: #00ff88; --red: #ff4444; --card: #111; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #000; color: white; padding: 20px 15px; transition: 0.5s; }
+        body { font-family: 'Poppins', sans-serif; background: #000; color: white; padding: 20px 15px; padding-bottom: 100px; }
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .top-stats { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -16,62 +16,63 @@
         .stat-box b { display: block; font-size: 18px; color: var(--accent); }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: var(--card); border-radius: 15px; border: 1px solid #222; overflow: hidden; position: relative; }
-        .card img { width: 100%; height: 110px; object-fit: contain; background: #0a0a0a; padding: 10px; }
+        .card { background: var(--card); border-radius: 15px; border: 1px solid #222; overflow: hidden; position: relative; display: flex; flex-direction: column; }
         
-        /* CONTROLLI ORDINE */
-        .order-controls { display: flex; justify-content: space-between; padding: 5px 10px; background: rgba(0,0,0,0.5); }
-        .order-btn { color: var(--accent); font-weight: bold; font-size: 18px; width: 30px; text-align: center; }
+        /* FRECCE ORDINE */
+        .order-controls { display: flex; justify-content: space-between; padding: 5px 10px; background: rgba(0,0,0,0.8); position: absolute; top:0; width: 100%; z-index: 10; }
+        .order-btn { color: var(--accent); font-weight: bold; font-size: 20px; cursor: pointer; width: 40%; text-align: center; }
 
-        .card-info { padding: 8px; text-align: center; }
-        .card-info b { font-size: 10px; display: block; text-transform: uppercase; margin-bottom: 5px; }
+        .card img { width: 100%; height: 130px; object-fit: contain; background: #0a0a0a; padding: 10px; margin-top: 25px; }
         
-        .btn-vendi { background: var(--accent); color: #000; border: none; width: 100%; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; }
+        .card-info { padding: 10px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .card-info b { font-size: 11px; display: block; text-transform: uppercase; margin-bottom: 8px; height: 30px; overflow: hidden; }
+        
+        .btn-vendi { background: var(--accent); color: #000; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; }
 
-        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #050505; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid #222; z-index: 100; }
-        .nav-btn { color: #666; text-decoration: none; font-size: 10px; font-family: 'Montserrat'; }
+        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #050505; display: flex; justify-content: space-around; padding: 20px; border-top: 1px solid #222; z-index: 100; }
+        .nav-btn { color: #666; text-decoration: none; font-size: 12px; font-family: 'Montserrat'; font-weight: bold; }
         .nav-btn.active { color: var(--accent); }
 
-        .page { display: none; padding-bottom: 80px; }
+        .page { display: none; }
         .page.active { display: block; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 style="font-family:'Montserrat'; font-size:16px;">KICKZONELAB</h1>
-        <button onclick="pulisci()" style="background:none; border:none; color:#333; font-size:10px;">RESET</button>
+        <h1 style="font-family:'Montserrat'; font-size:18px; color:var(--accent);">KICKZONELAB</h1>
+        <button onclick="pulisci()" style="background:none; border:none; color:#444; font-size:10px;">RESET DATI</button>
     </div>
 
     <div id="stats-area" class="top-stats">
-        <div class="stat-box"><b id="val-lordo">0€</b><span>LORDO</span></div>
-        <div class="stat-box"><b id="val-profit" style="color:var(--green)">0€</b><span>PROFITTO</span></div>
+        <div class="stat-box"><b id="val-lordo">0€</b><span style="font-size:9px; color:#666;">LORDO</span></div>
+        <div class="stat-box"><b id="val-profit" style="color:var(--green)">0€</b><span style="font-size:9px; color:#666;">PROFITTO</span></div>
     </div>
 
     <div id="home" class="page active">
         <div class="grid" id="main-grid"></div>
-        <button onclick="aggiungi()" style="width:100%; margin-top:20px; background:none; border:1px dashed #333; color:#666; padding:15px; border-radius:15px;">+ AGGIUNGI ALTRO</button>
+        <button onclick="aggiungi()" style="width:100%; margin-top:25px; background:none; border: 1px dashed var(--accent); color:var(--accent); padding:15px; border-radius:15px; font-weight:bold;">+ AGGIUNGI ARTICOLO</button>
     </div>
 
     <div id="history" class="page">
-        <h2 style="margin-bottom:20px;">STORICO</h2>
+        <h2 style="font-family:'Montserrat'; margin-bottom:20px; font-size:18px;">VENDITE RECENTI</h2>
         <div id="list-history"></div>
     </div>
 
     <div class="nav">
-        <a href="#" class="nav-btn active" onclick="vai('home')">HOME</a>
+        <a href="#" class="nav-btn active" onclick="vai('home')">VETRINA</a>
         <a href="#" class="nav-btn" onclick="vai('history')">STORICO</a>
     </div>
 
     <script>
-        const KEY = 'KZL_SISTEMA_ORDINE_V1';
+        const KEY = 'KZL_SISTEMA_ORDINE_FOTO_V1';
         
-        // DATI INIZIALI CON I TUOI MODELLI
-        let defaultScarpe = [
+        // ARTICOLI CON IMMAGINI (I nomi file corrispondono a quelli caricati)
+        const scarpeIniziali = [
             { id: 1, n: "LV SKATE", p: 100, l: 950, img: "lvskate" },
-            { id: 2, n: "MCQUEEN", p: 60, l: 450, img: "" },
-            { id: 3, n: "ASICS GEL", p: 40, l: 160, img: "" },
-            { id: 4, n: "JORDAN 4", p: 70, l: 350, img: "" },
+            { id: 2, n: "ALEXANDER MCQUEEN", p: 60, l: 450, img: "MCQUUEN.jpg" },
+            { id: 3, n: "ASICS GEL NYC", p: 45, l: 165, img: "asics-gel-nyc-cream-cloud-grey-blue-1203a953-100-mentastore-5878532.png.webp" },
+            { id: 4, n: "JORDAN 4 BLACK GOLD", p: 80, l: 380, img: "air-jordan-4-black-gold_11681017.jpg!sw800.jpeg" },
             { id: 5, n: "NUMERIS", p: 50, l: 200, img: "" },
             { id: 6, n: "GOLDEN GOOSE", p: 70, l: 420, img: "" },
             { id: 7, n: "NOCTA", p: 40, l: 190, img: "" },
@@ -80,12 +81,13 @@
             { id: 10, n: "DUNK SB", p: 45, l: 160, img: "" }
         ];
 
-        let dati = JSON.parse(localStorage.getItem(KEY)) || { scarpe: defaultScarpe, vendite: [] };
+        let dati = JSON.parse(localStorage.getItem(KEY)) || { scarpe: scarpeIniziali, vendite: [] };
 
         function vai(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
             if(id === 'history') renderHistory();
         }
 
@@ -109,13 +111,13 @@
             let s = dati.scarpe.find(x => x.id === id);
             dati.vendite.push({ n: s.n, p: s.p, l: s.l, d: new Date().toLocaleDateString() });
             salva();
-            alert("VENDUTA: " + s.n);
+            alert("REGISTRATO: " + s.n);
         }
 
         function aggiungi() {
-            let n = prompt("Nome:"); if(!n) return;
-            let l = prompt("Lordo:");
-            let p = prompt("Profitto:");
+            let n = prompt("Nome Scarpa:"); if(!n) return;
+            let l = prompt("Lordo (€):");
+            let p = prompt("Profitto (€):");
             dati.scarpe.push({ id: Date.now(), n, l: parseFloat(l), p: parseFloat(p), img: "" });
             salva();
         }
@@ -128,9 +130,7 @@
                         <div class="order-btn" onclick="sposta(${s.id}, -1)">‹</div>
                         <div class="order-btn" onclick="sposta(${s.id}, 1)">›</div>
                     </div>
-                    <div style="height:90px; background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:10px; color:#444;">
-                        ${s.n}
-                    </div>
+                    <img src="${s.img || 'https://via.placeholder.com/150/111/var(--accent)?text=NO+IMAGE'}" onerror="this.src='https://via.placeholder.com/150/111/333?text=KICKZONE'">
                     <div class="card-info">
                         <b>${s.n}</b>
                         <button class="btn-vendi" onclick="vendi(${s.id})">VENDI (+${s.p}€)</button>
@@ -144,14 +144,14 @@
 
         function renderHistory() {
             document.getElementById('list-history').innerHTML = dati.vendite.slice().reverse().map(v => `
-                <div style="background:#111; padding:15px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between; border:1px solid #222;">
-                    <span><b>${v.n}</b><br><small>${v.d}</small></span>
-                    <b style="color:var(--green)">+${v.p}€</b>
+                <div style="background:#111; padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid #222;">
+                    <span><b style="font-size:13px;">${v.n}</b><br><small style="color:#555;">${v.d}</small></span>
+                    <b style="color:var(--green); font-size:16px;">+${v.p}€</b>
                 </div>
-            `).join('');
+            `).join('') || "<p style='text-align:center; color:#333;'>Nessuna vendita.</p>";
         }
 
-        function pulisci() { if(confirm("Resettare ordine e vendite?")) { localStorage.clear(); location.reload(); } }
+        function pulisci() { if(confirm("Vuoi cancellare tutto lo storico e l'ordine?")) { localStorage.clear(); location.reload(); } }
 
         render();
     </script>
