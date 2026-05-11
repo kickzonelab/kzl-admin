@@ -2,214 +2,155 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>KICKZONELAB ADMIN</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #00e5ff; --bg: #000; --green: #00ff88; --red: #ff4444; }
+        :root { --accent: #00e5ff; --bg: #000; --green: #00ff88; --red: #ff4444; --card: #111; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #000; color: white; padding: 20px 15px; min-height: 100vh; }
+        body { font-family: 'Poppins', sans-serif; background: #000; color: white; padding: 20px 15px; }
         
-        /* HEADER */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-top: 10px; }
-        .menu-icon { width: 30px; height: 20px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; }
-        .menu-icon span { display: block; height: 3px; background: var(--accent); border-radius: 3px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header h1 { font-family: 'Montserrat'; font-size: 16px; letter-spacing: 1px; }
 
-        /* STATS */
         .top-stats { display: flex; gap: 10px; margin-bottom: 20px; }
-        .stat-box { flex: 1; background: #111; border: 1px solid #222; border-radius: 15px; padding: 15px; text-align: center; }
+        .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 15px; padding: 15px; text-align: center; }
         .stat-box b { display: block; font-size: 20px; color: var(--accent); }
-        .stat-box span { font-size: 9px; color: #666; font-weight: bold; }
+
+        h2 { font-family: 'Montserrat'; font-size: 18px; margin: 20px 0 10px; color: var(--accent); text-transform: uppercase; }
 
         /* GRID */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: #111; border-radius: 15px; border: 1px solid #222; overflow: hidden; position: relative; }
-        .card img { width: 100%; height: 120px; object-fit: contain; background: #0a0a0a; padding: 10px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
+        .card { background: var(--card); border-radius: 15px; border: 1px solid #222; overflow: hidden; position: relative; transition: 0.3s; }
+        .card:active { transform: scale(0.95); }
+        .card img { width: 100%; height: 110px; object-fit: contain; background: #0a0a0a; padding: 10px; }
         .card-info { padding: 10px; text-align: center; }
-        .del { position: absolute; top: 5px; right: 5px; background: var(--red); color: white; width: 22px; height: 22px; border-radius: 50%; text-align: center; line-height: 20px; font-weight: bold; border: 1px solid #000; }
+        .card-info b { font-size: 11px; display: block; text-transform: uppercase; }
+        .del { position: absolute; top: 5px; right: 5px; background: var(--red); color: white; width: 22px; height: 22px; border-radius: 50%; text-align: center; line-height: 20px; font-size: 12px; font-weight: bold; z-index: 5; }
 
-        /* MENU LATERALE */
+        /* MENU */
         #menu { position: fixed; top: 0; right: -100%; width: 80%; height: 100%; background: #050505; z-index: 1000; transition: 0.3s; padding: 50px 30px; border-left: 1px solid #222; }
         #menu.open { right: 0; }
         .nav-link { display: block; color: white; font-size: 20px; margin-bottom: 25px; text-decoration: none; font-family: 'Montserrat'; }
 
-        /* PAGINE */
         .page { display: none; }
         .page.active { display: block; }
-        .btn-add { background: var(--accent); color: #000; padding: 15px; border-radius: 15px; text-align: center; font-weight: bold; margin-top: 20px; }
-
-        /* TODO LIST */
-        .todo { background: #111; padding: 15px; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #222; }
-        .todo.done { border-color: var(--green); opacity: 0.5; text-decoration: line-through; }
-        .check { width: 20px; height: 20px; border: 2px solid var(--accent); border-radius: 50%; margin-right: 10px; }
-        .todo.done .check { background: var(--green); border-color: var(--green); }
-
-        /* GOAL */
-        .bar-bg { width: 100%; height: 12px; background: #222; border-radius: 10px; margin: 15px 0; }
-        #bar-fill { height: 100%; background: var(--accent); width: 0%; transition: 0.5s; }
+        .btn-add { background: var(--accent); color: #000; padding: 15px; border-radius: 15px; text-align: center; font-weight: bold; margin-top: 10px; font-family: 'Montserrat'; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 style="font-family:'Montserrat'; font-size:16px;">KICKZONELAB</h1>
-        <div class="menu-icon" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+        <h1>KICKZONELAB</h1>
+        <div onclick="toggleMenu()" style="cursor:pointer; color:var(--accent); font-weight:bold;">MENU</div>
     </div>
 
     <div id="stats-header" class="top-stats">
-        <div class="stat-box"><b id="val-lordo">0€</b><span>LORDO</span></div>
-        <div class="stat-box"><b id="val-profit" style="color:var(--green)">0€</b><span>PROFITTO</span></div>
+        <div class="stat-box"><b id="val-lordo">0€</b><span style="font-size:9px; color:#666;">LORDO</span></div>
+        <div class="stat-box"><b id="val-profit" style="color:var(--green)">0€</b><span style="font-size:9px; color:#666;">PROFITTO</span></div>
     </div>
 
     <div id="home" class="page active">
-        <div class="grid" id="grid-main"></div>
-        <div class="btn-add" onclick="aggiungi()">+ AGGIUNGI</div>
-        <button onclick="pulisciTutto()" style="width:100%; background:none; border:none; color:#333; margin-top:30px; font-size:10px;">RESET TOTALE CACHE</button>
+        
+        <h2>MODELLI FISSI</h2>
+        <div class="grid" id="grid-fixed"></div>
+
+        <h2>I TUOI ARTICOLI</h2>
+        <div class="grid" id="grid-user"></div>
+        
+        <div class="btn-add" onclick="aggiungi()">+ AGGIUNGI ARTICOLO PERSONALE</div>
     </div>
 
-    <div id="goal" class="page">
-        <h2>OBIETTIVI</h2>
-        <div class="stat-box" style="margin-top:20px;">
-            <p>TARGET: 1.500€</p>
-            <div class="bar-bg"><div id="bar-fill"></div></div>
-            <p id="txt-goal">0%</p>
-        </div>
-    </div>
-
-    <div id="improve" class="page">
-        <h2>AZIENDA</h2>
-        <div id="list-improve" style="margin-top:20px;"></div>
-        <div class="btn-add" onclick="nuovoGoal()">+ OBIETTIVO</div>
-    </div>
-
-    <div id="history" class="page">
-        <h2>STORICO VENDITE</h2>
-        <div id="list-history" style="margin-top:20px;"></div>
-    </div>
+    <div id="history" class="page"><h2>STORICO VENDITE</h2><div id="list-history"></div></div>
+    <div id="goal" class="page"><h2>OBIETTIVI</h2><p id="txt-goal"></p></div>
 
     <div id="menu">
         <div onclick="toggleMenu()" style="font-size:30px; margin-bottom:30px;">×</div>
         <a href="#" class="nav-link" onclick="vaiA('home')">HOME</a>
         <a href="#" class="nav-link" onclick="vaiA('history')">STORICO</a>
-        <a href="#" class="nav-link" onclick="vaiA('goal')">OBIETTIVI</a>
-        <a href="#" class="nav-link" onclick="vaiA('improve')">AZIENDA</a>
+        <button onclick="localStorage.clear(); location.reload();" style="background:none; border:none; color:red; margin-top:50px;">RESET CACHE</button>
     </div>
 
     <script>
-        const DB_NAME = 'KZL_FINAL_STORAGE';
-        let dati = JSON.parse(localStorage.getItem(DB_NAME)) || { scarpe: [], vendite: [], task: [] };
+        // MODELLI RICHIESTI (NON OCCUPANO SPAZIO IN MEMORIA)
+        const MODELLI_FISSI = [
+            { n: "LV SKATE", p: 100, l: 900 },
+            { n: "NUMERIS", p: 50, l: 200 },
+            { n: "GOLDEN GOOSE", p: 70, l: 400 },
+            { n: "NOCTA", p: 40, l: 180 },
+            { n: "OFF WHITE OOF", p: 80, l: 350 },
+            { n: "CAMPUS", p: 30, l: 110 },
+            { n: "DUNK SB", p: 40, l: 150 }
+        ];
+
+        const KEY = 'KZL_FINAL_V2';
+        let dati = JSON.parse(localStorage.getItem(KEY)) || { userScarpe: [], vendite: [] };
 
         function vaiA(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.getElementById('stats-header').style.display = (id === 'home') ? 'flex' : 'none';
-            if(id === 'goal') aggiornaGoal();
-            if(id === 'improve') renderingTask();
-            if(id === 'history') renderingHistory();
             toggleMenu();
+            if(id === 'history') renderHistory();
         }
 
         function toggleMenu() { document.getElementById('menu').classList.toggle('open'); }
 
         function salva() {
-            try {
-                localStorage.setItem(DB_NAME, JSON.stringify(dati));
-                renderingHome();
-            } catch(e) {
-                alert("Memoria piena! Elimina qualche vecchia vendita o scarpa.");
-            }
+            localStorage.setItem(KEY, JSON.stringify(dati));
+            render();
+        }
+
+        function vendi(nome, lordo, profitto) {
+            dati.vendite.push({ n: nome, l: lordo, p: profitto, d: new Date().toLocaleDateString() });
+            salva();
+            alert("VENDUTO: " + nome);
         }
 
         function aggiungi() {
-            let n = prompt("Nome scarpa:"); if(!n) return;
-            let l = prompt("Lordo:"); let p = prompt("Profitto:");
-            let fileInput = document.createElement('input');
-            fileInput.type = 'file'; fileInput.accept = 'image/*';
-            fileInput.onchange = e => {
-                let reader = new FileReader();
-                reader.onload = ev => {
-                    let img = new Image();
-                    img.onload = () => {
-                        let canvas = document.createElement('canvas');
-                        let ctx = canvas.getContext('2d');
-                        canvas.width = 250; canvas.height = 250; // MOLTO PICCOLA PER EVITARE CRASH
-                        ctx.drawImage(img, 0, 0, 250, 250);
-                        dati.scarpe.push({ id: Date.now(), n, l: parseFloat(l), p: parseFloat(p), img: canvas.toDataURL('image/jpeg', 0.5) });
-                        salva();
-                    };
-                    img.src = ev.target.result;
-                };
-                reader.readAsDataURL(e.target.files[0]);
-            };
-            fileInput.click();
-        }
-
-        function vendi(id) {
-            let s = dati.scarpe.find(x => x.id === id);
-            dati.vendite.push({ n: s.n, p: s.p, l: s.l, data: new Date().toLocaleDateString() });
+            let n = prompt("Nome:"); if(!n) return;
+            let l = prompt("Lordo:");
+            let p = prompt("Profitto:");
+            dati.userScarpe.push({ id: Date.now(), n, l: parseFloat(l), p: parseFloat(p), img: "" });
             salva();
-            alert("VENDUTA!");
         }
 
-        function elimina(id) {
-            if(confirm("Eliminare?")) { dati.scarpe = dati.scarpe.filter(x => x.id !== id); salva(); }
-        }
+        function render() {
+            // Render Modelli Fissi
+            document.getElementById('grid-fixed').innerHTML = MODELLI_FISSI.map(s => `
+                <div class="card" onclick="vendi('${s.n}', ${s.l}, ${s.p})">
+                    <div style="height:110px; background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:10px; color:#444;">LOGO KZL</div>
+                    <div class="card-info"><b>${s.n}</b><span style="color:var(--green)">+${s.p}€</span></div>
+                </div>
+            `).join('');
 
-        function renderingHome() {
-            let g = document.getElementById('grid-main');
-            g.innerHTML = dati.scarpe.map(s => `
+            // Render Modelli Utente (quelli con foto)
+            document.getElementById('grid-user').innerHTML = dati.userScarpe.map(s => `
                 <div class="card">
-                    <div class="del" onclick="elimina(${s.id})">×</div>
-                    <div onclick="vendi(${s.id})">
-                        <img src="${s.img}">
-                        <div class="card-info"><b>${s.n}</b><br><span style="color:var(--green)">+${s.p}€</span></div>
+                    <div class="del" onclick="dati.userScarpe=dati.userScarpe.filter(x=>x.id!=${s.id}); salva();">×</div>
+                    <div onclick="vendi('${s.n}', ${s.l}, ${s.p})">
+                        <div style="height:110px; background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:10px; color:#444;">CUSTOM</div>
+                        <div class="card-info"><b>${s.n}</b><span style="color:var(--green)">+${s.p}€</span></div>
                     </div>
                 </div>
             `).join('');
-            
-            let tL = dati.vendite.reduce((a,b) => a + (b.l || 0), 0);
-            let tP = dati.vendite.reduce((a,b) => a + (b.p || 0), 0);
+
+            let tL = dati.vendite.reduce((a,b) => a + b.l, 0);
+            let tP = dati.vendite.reduce((a,b) => a + b.p, 0);
             document.getElementById('val-lordo').innerText = tL + "€";
             document.getElementById('val-profit').innerText = tP + "€";
         }
 
-        function aggiornaGoal() {
-            let t = 1500; let c = dati.vendite.reduce((a,b) => a + (b.p || 0), 0);
-            let p = Math.min((c/t)*100, 100);
-            document.getElementById('bar-fill').style.width = p + "%";
-            document.getElementById('txt-goal').innerText = Math.floor(p) + "% (" + c + "€ / " + t + "€)";
-        }
-
-        function nuovoGoal() {
-            let t = prompt("Cosa vuoi migliorare?");
-            if(t) { dati.task.push({ t, d: false }); salva(); renderingTask(); }
-        }
-
-        function renderingTask() {
-            document.getElementById('list-improve').innerHTML = dati.task.map((x, i) => `
-                <div class="todo ${x.d ? 'done' : ''}" onclick="dati.task[${i}].d=!dati.task[${i}].d; salva(); renderingTask();">
-                    <div class="check"></div><span>${x.t}</span>
-                    <div style="margin-left:auto" onclick="event.stopPropagation(); dati.task.splice(${i},1); salva(); renderingTask();">×</div>
+        function renderHistory() {
+            document.getElementById('list-history').innerHTML = dati.vendite.slice().reverse().map(v => `
+                <div style="background:#111; padding:15px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between; border:1px solid #222;">
+                    <span><b>${v.n}</b><br><small>${v.d}</small></span>
+                    <b style="color:var(--green)">+${v.p}€</b>
                 </div>
             `).join('');
         }
 
-        function renderingHistory() {
-            document.getElementById('list-history').innerHTML = dati.vendite.slice().reverse().map(v => `
-                <div class="todo"><b>${v.n}</b> <span style="margin-left:auto; color:var(--green)">+${v.p}€</span></div>
-            `).join('');
-        }
-
-        function pulisciTutto() {
-            if(confirm("Questo cancellerà TUTTO il database. Sei sicuro?")) {
-                localStorage.clear();
-                location.reload();
-            }
-        }
-
-        // Avvio
-        renderingHome();
+        render();
     </script>
 </body>
 </html>
