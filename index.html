@@ -3,142 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>KICKZONELAB ADMIN</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #00e5ff; --bg: #000; --green: #00ff88; --red: #ff4444; --card: #111; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #000; color: white; padding: 20px 15px; }
+        body { font-family: 'Poppins', sans-serif; background: #000; color: white; padding: 20px 15px; transition: 0.5s; }
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .header h1 { font-family: 'Montserrat'; font-size: 16px; letter-spacing: 1px; }
-
         .top-stats { display: flex; gap: 10px; margin-bottom: 20px; }
         .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 15px; padding: 15px; text-align: center; }
-        .stat-box b { display: block; font-size: 20px; color: var(--accent); }
+        .stat-box b { display: block; font-size: 18px; color: var(--accent); }
 
-        h2 { font-family: 'Montserrat'; font-size: 18px; margin: 20px 0 10px; color: var(--accent); text-transform: uppercase; }
-
-        /* GRID */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
-        .card { background: var(--card); border-radius: 15px; border: 1px solid #222; overflow: hidden; position: relative; transition: 0.3s; }
-        .card:active { transform: scale(0.95); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .card { background: var(--card); border-radius: 15px; border: 1px solid #222; overflow: hidden; position: relative; }
         .card img { width: 100%; height: 110px; object-fit: contain; background: #0a0a0a; padding: 10px; }
-        .card-info { padding: 10px; text-align: center; }
-        .card-info b { font-size: 11px; display: block; text-transform: uppercase; }
-        .del { position: absolute; top: 5px; right: 5px; background: var(--red); color: white; width: 22px; height: 22px; border-radius: 50%; text-align: center; line-height: 20px; font-size: 12px; font-weight: bold; z-index: 5; }
+        
+        /* CONTROLLI ORDINE */
+        .order-controls { display: flex; justify-content: space-between; padding: 5px 10px; background: rgba(0,0,0,0.5); }
+        .order-btn { color: var(--accent); font-weight: bold; font-size: 18px; width: 30px; text-align: center; }
 
-        /* MENU */
-        #menu { position: fixed; top: 0; right: -100%; width: 80%; height: 100%; background: #050505; z-index: 1000; transition: 0.3s; padding: 50px 30px; border-left: 1px solid #222; }
-        #menu.open { right: 0; }
-        .nav-link { display: block; color: white; font-size: 20px; margin-bottom: 25px; text-decoration: none; font-family: 'Montserrat'; }
+        .card-info { padding: 8px; text-align: center; }
+        .card-info b { font-size: 10px; display: block; text-transform: uppercase; margin-bottom: 5px; }
+        
+        .btn-vendi { background: var(--accent); color: #000; border: none; width: 100%; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; }
 
-        .page { display: none; }
+        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #050505; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid #222; z-index: 100; }
+        .nav-btn { color: #666; text-decoration: none; font-size: 10px; font-family: 'Montserrat'; }
+        .nav-btn.active { color: var(--accent); }
+
+        .page { display: none; padding-bottom: 80px; }
         .page.active { display: block; }
-        .btn-add { background: var(--accent); color: #000; padding: 15px; border-radius: 15px; text-align: center; font-weight: bold; margin-top: 10px; font-family: 'Montserrat'; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>KICKZONELAB</h1>
-        <div onclick="toggleMenu()" style="cursor:pointer; color:var(--accent); font-weight:bold;">MENU</div>
+        <h1 style="font-family:'Montserrat'; font-size:16px;">KICKZONELAB</h1>
+        <button onclick="pulisci()" style="background:none; border:none; color:#333; font-size:10px;">RESET</button>
     </div>
 
-    <div id="stats-header" class="top-stats">
-        <div class="stat-box"><b id="val-lordo">0€</b><span style="font-size:9px; color:#666;">LORDO</span></div>
-        <div class="stat-box"><b id="val-profit" style="color:var(--green)">0€</b><span style="font-size:9px; color:#666;">PROFITTO</span></div>
+    <div id="stats-area" class="top-stats">
+        <div class="stat-box"><b id="val-lordo">0€</b><span>LORDO</span></div>
+        <div class="stat-box"><b id="val-profit" style="color:var(--green)">0€</b><span>PROFITTO</span></div>
     </div>
 
     <div id="home" class="page active">
-        
-        <h2>MODELLI FISSI</h2>
-        <div class="grid" id="grid-fixed"></div>
-
-        <h2>I TUOI ARTICOLI</h2>
-        <div class="grid" id="grid-user"></div>
-        
-        <div class="btn-add" onclick="aggiungi()">+ AGGIUNGI ARTICOLO PERSONALE</div>
+        <div class="grid" id="main-grid"></div>
+        <button onclick="aggiungi()" style="width:100%; margin-top:20px; background:none; border:1px dashed #333; color:#666; padding:15px; border-radius:15px;">+ AGGIUNGI ALTRO</button>
     </div>
 
-    <div id="history" class="page"><h2>STORICO VENDITE</h2><div id="list-history"></div></div>
-    <div id="goal" class="page"><h2>OBIETTIVI</h2><p id="txt-goal"></p></div>
+    <div id="history" class="page">
+        <h2 style="margin-bottom:20px;">STORICO</h2>
+        <div id="list-history"></div>
+    </div>
 
-    <div id="menu">
-        <div onclick="toggleMenu()" style="font-size:30px; margin-bottom:30px;">×</div>
-        <a href="#" class="nav-link" onclick="vaiA('home')">HOME</a>
-        <a href="#" class="nav-link" onclick="vaiA('history')">STORICO</a>
-        <button onclick="localStorage.clear(); location.reload();" style="background:none; border:none; color:red; margin-top:50px;">RESET CACHE</button>
+    <div class="nav">
+        <a href="#" class="nav-btn active" onclick="vai('home')">HOME</a>
+        <a href="#" class="nav-btn" onclick="vai('history')">STORICO</a>
     </div>
 
     <script>
-        // MODELLI RICHIESTI (NON OCCUPANO SPAZIO IN MEMORIA)
-        const MODELLI_FISSI = [
-            { n: "LV SKATE", p: 100, l: 900 },
-            { n: "NUMERIS", p: 50, l: 200 },
-            { n: "GOLDEN GOOSE", p: 70, l: 400 },
-            { n: "NOCTA", p: 40, l: 180 },
-            { n: "OFF WHITE OOF", p: 80, l: 350 },
-            { n: "CAMPUS", p: 30, l: 110 },
-            { n: "DUNK SB", p: 40, l: 150 }
+        const KEY = 'KZL_SISTEMA_ORDINE_V1';
+        
+        // DATI INIZIALI CON I TUOI MODELLI
+        let defaultScarpe = [
+            { id: 1, n: "LV SKATE", p: 100, l: 950, img: "lvskate" },
+            { id: 2, n: "MCQUEEN", p: 60, l: 450, img: "" },
+            { id: 3, n: "ASICS GEL", p: 40, l: 160, img: "" },
+            { id: 4, n: "JORDAN 4", p: 70, l: 350, img: "" },
+            { id: 5, n: "NUMERIS", p: 50, l: 200, img: "" },
+            { id: 6, n: "GOLDEN GOOSE", p: 70, l: 420, img: "" },
+            { id: 7, n: "NOCTA", p: 40, l: 190, img: "" },
+            { id: 8, n: "OFF WHITE OOF", p: 80, l: 380, img: "" },
+            { id: 9, n: "CAMPUS", p: 30, l: 120, img: "" },
+            { id: 10, n: "DUNK SB", p: 45, l: 160, img: "" }
         ];
 
-        const KEY = 'KZL_FINAL_V2';
-        let dati = JSON.parse(localStorage.getItem(KEY)) || { userScarpe: [], vendite: [] };
+        let dati = JSON.parse(localStorage.getItem(KEY)) || { scarpe: defaultScarpe, vendite: [] };
 
-        function vaiA(id) {
+        function vai(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            toggleMenu();
             if(id === 'history') renderHistory();
         }
-
-        function toggleMenu() { document.getElementById('menu').classList.toggle('open'); }
 
         function salva() {
             localStorage.setItem(KEY, JSON.stringify(dati));
             render();
         }
 
-        function vendi(nome, lordo, profitto) {
-            dati.vendite.push({ n: nome, l: lordo, p: profitto, d: new Date().toLocaleDateString() });
+        function sposta(id, direzione) {
+            let index = dati.scarpe.findIndex(x => x.id === id);
+            let nuovoIndex = index + direzione;
+            if (nuovoIndex >= 0 && nuovoIndex < dati.scarpe.length) {
+                let temp = dati.scarpe[index];
+                dati.scarpe[index] = dati.scarpe[nuovoIndex];
+                dati.scarpe[nuovoIndex] = temp;
+                salva();
+            }
+        }
+
+        function vendi(id) {
+            let s = dati.scarpe.find(x => x.id === id);
+            dati.vendite.push({ n: s.n, p: s.p, l: s.l, d: new Date().toLocaleDateString() });
             salva();
-            alert("VENDUTO: " + nome);
+            alert("VENDUTA: " + s.n);
         }
 
         function aggiungi() {
             let n = prompt("Nome:"); if(!n) return;
             let l = prompt("Lordo:");
             let p = prompt("Profitto:");
-            dati.userScarpe.push({ id: Date.now(), n, l: parseFloat(l), p: parseFloat(p), img: "" });
+            dati.scarpe.push({ id: Date.now(), n, l: parseFloat(l), p: parseFloat(p), img: "" });
             salva();
         }
 
         function render() {
-            // Render Modelli Fissi
-            document.getElementById('grid-fixed').innerHTML = MODELLI_FISSI.map(s => `
-                <div class="card" onclick="vendi('${s.n}', ${s.l}, ${s.p})">
-                    <div style="height:110px; background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:10px; color:#444;">LOGO KZL</div>
-                    <div class="card-info"><b>${s.n}</b><span style="color:var(--green)">+${s.p}€</span></div>
-                </div>
-            `).join('');
-
-            // Render Modelli Utente (quelli con foto)
-            document.getElementById('grid-user').innerHTML = dati.userScarpe.map(s => `
+            let g = document.getElementById('main-grid');
+            g.innerHTML = dati.scarpe.map(s => `
                 <div class="card">
-                    <div class="del" onclick="dati.userScarpe=dati.userScarpe.filter(x=>x.id!=${s.id}); salva();">×</div>
-                    <div onclick="vendi('${s.n}', ${s.l}, ${s.p})">
-                        <div style="height:110px; background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:10px; color:#444;">CUSTOM</div>
-                        <div class="card-info"><b>${s.n}</b><span style="color:var(--green)">+${s.p}€</span></div>
+                    <div class="order-controls">
+                        <div class="order-btn" onclick="sposta(${s.id}, -1)">‹</div>
+                        <div class="order-btn" onclick="sposta(${s.id}, 1)">›</div>
+                    </div>
+                    <div style="height:90px; background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:10px; color:#444;">
+                        ${s.n}
+                    </div>
+                    <div class="card-info">
+                        <b>${s.n}</b>
+                        <button class="btn-vendi" onclick="vendi(${s.id})">VENDI (+${s.p}€)</button>
                     </div>
                 </div>
             `).join('');
 
-            let tL = dati.vendite.reduce((a,b) => a + b.l, 0);
-            let tP = dati.vendite.reduce((a,b) => a + b.p, 0);
-            document.getElementById('val-lordo').innerText = tL + "€";
-            document.getElementById('val-profit').innerText = tP + "€";
+            document.getElementById('val-lordo').innerText = dati.vendite.reduce((a,b) => a+b.l, 0) + "€";
+            document.getElementById('val-profit').innerText = dati.vendite.reduce((a,b) => a+b.p, 0) + "€";
         }
 
         function renderHistory() {
@@ -149,6 +150,8 @@
                 </div>
             `).join('');
         }
+
+        function pulisci() { if(confirm("Resettare ordine e vendite?")) { localStorage.clear(); location.reload(); } }
 
         render();
     </script>
