@@ -1,164 +1,241 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KICKZONELAB ADMIN</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root { --accent: #00e5ff; --bg: #000; --green: #00ff88; --red: #ff4444; --card: #111; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #000; color: white; padding: 20px 15px; padding-bottom: 100px; }
-        
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .top-stats { display: flex; gap: 10px; margin-bottom: 20px; }
-        .stat-box { flex: 1; background: var(--card); border: 1px solid #222; border-radius: 15px; padding: 15px; text-align: center; }
-        .stat-box b { display: block; font-size: 18px; color: var(--accent); }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KickZoneLab - Sales & Goals Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0c0f14;
+      --card-bg: #161b22;
+      --accent-blue: #00e5ff;
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --border-color: #21262d;
+      --danger-color: #ff4d4d;
+      --success-color: #00e676;
+    }
 
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: var(--card); border-radius: 15px; border: 1px solid #222; overflow: hidden; position: relative; display: flex; flex-direction: column; }
-        
-        /* FRECCE ORDINE */
-        .order-controls { display: flex; justify-content: space-between; padding: 5px 10px; background: rgba(0,0,0,0.8); position: absolute; top:0; width: 100%; z-index: 10; }
-        .order-btn { color: var(--accent); font-weight: bold; font-size: 20px; cursor: pointer; width: 40%; text-align: center; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); padding: 30px 15px; }
 
-        .card img { width: 100%; height: 130px; object-fit: contain; background: #0a0a0a; padding: 10px; margin-top: 25px; display: block; }
-        
-        .card-info { padding: 10px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .card-info b { font-size: 11px; display: block; text-transform: uppercase; margin-bottom: 8px; min-height: 30px; }
-        
-        .btn-vendi { background: var(--accent); color: #000; border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; }
+    .container { max-width: 900px; margin: 0 auto; }
 
-        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #050505; display: flex; justify-content: space-around; padding: 20px; border-top: 1px solid #222; z-index: 100; }
-        .nav-btn { color: #666; text-decoration: none; font-size: 12px; font-family: 'Montserrat'; font-weight: bold; }
-        .nav-btn.active { color: var(--accent); }
+    /* Header e Logo */
+    header { text-align: center; margin-bottom: 30px; }
+    header img { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--accent-blue); box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); object-fit: cover; }
+    header h1 { font-size: 2.2rem; margin-top: 10px; color: #fff; letter-spacing: 1px; }
+    header p { color: var(--text-muted); font-size: 0.9rem; }
 
-        .page { display: none; }
-        .page.active { display: block; }
-    </style>
+    /* Grid Layout */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+    @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* Card */
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .card h2 { font-size: 1.2rem; margin-bottom: 15px; color: var(--accent-blue); display: flex; align-items: center; justify-content: space-between; }
+
+    /* Statistiche */
+    .stats-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+    .stat-box { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent-blue); }
+    .stat-box.profit { border-left-color: var(--success-color); }
+    .stat-box p { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; }
+    .stat-box span { font-size: 1.4rem; font-weight: 700; }
+
+    /* Sezione Obiettivi */
+    .goal-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+    .goal-input-group input { flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: #0d1117; color: #fff; }
+    .goal-input-group button { padding: 8px 15px; background: var(--accent-blue); border: none; border-radius: 6px; font-weight: 600; cursor: pointer; color: #000; }
+
+    .progress-bar-bg { width: 100%; height: 12px; background: #21262d; border-radius: 6px; overflow: hidden; margin-top: 8px; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #00e5ff, #00e676); width: 0%; transition: width 0.4s ease; }
+    .progress-text { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; display: flex; justify-content: space-between; }
+
+    /* Form Inserimento */
+    form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    form input { padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: #0d1117; color: #fff; font-size: 0.9rem; }
+    form input:focus { outline: 1px solid var(--accent-blue); }
+    form button { grid-column: span 2; padding: 12px; background: var(--accent-blue); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    form button:hover { box-shadow: 0 0 15px rgba(0, 229, 255, 0.5); }
+
+    /* Tabella */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+    th { text-align: left; padding: 12px; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
+    td { padding: 12px; border-bottom: 1px solid var(--border-color); }
+    .btn-delete { background: none; border: none; color: var(--danger-color); cursor: pointer; font-size: 1.1rem; }
+    .positive { color: var(--success-color); font-weight: 600; }
+    .negative { color: var(--danger-color); font-weight: 600; }
+  </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1 style="font-family:'Montserrat'; font-size:18px; color:var(--accent);">KICKZONELAB</h1>
-        <button onclick="pulisci()" style="background:none; border:none; color:#444; font-size:10px;">RESET DATI</button>
+<div class="container">
+  
+  <header>
+    <img src="logo.png" alt="KickZoneLab Logo" onerror="this.style.display='none'">
+    <h1>KICKZONELAB</h1>
+    <p>Resell Sales & Goals Tracker</p>
+  </header>
+
+  <div class="grid-2">
+    <div class="card">
+      <h2>In Evidenza</h2>
+      <div class="stats-container">
+        <div class="stat-box">
+          <p>Vendite Totali</p>
+          <span id="total-sales">€ 0.00</span>
+        </div>
+        <div class="stat-box profit">
+          <p>Profitto Netto</p>
+          <span id="total-profit">€ 0.00</span>
+        </div>
+      </div>
     </div>
 
-    <div id="stats-area" class="top-stats">
-        <div class="stat-box"><b><span id="val-lordo">0</span>€</b><span style="font-size:9px; color:#666;">LORDO</span></div>
-        <div class="stat-box"><b style="color:var(--green)"><span id="val-profit">0</span>€</b><span style="font-size:9px; color:#666;">PROFITTO</span></div>
+    <div class="card">
+      <h2>Obiettivo Profitto</h2>
+      <div class="goal-input-group">
+        <input type="number" id="goal-input" placeholder="Imposta Target (€)" value="1000">
+        <button id="set-goal-btn">Salva</button>
+      </div>
+      <div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="goal-bar"></div>
+        </div>
+        <div class="progress-text">
+          <span id="goal-progress-text">0.0% completato</span>
+          <span id="goal-target-text">Target: € 1000</span>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div id="home" class="page active">
-        <div class="grid" id="main-grid"></div>
-        <button onclick="aggiungi()" style="width:100%; margin-top:25px; background:none; border: 1px dashed var(--accent); color:var(--accent); padding:15px; border-radius:15px; font-weight:bold;">+ AGGIUNGI ALTRO</button>
+  <div class="card" style="margin-bottom: 25px;">
+    <h2>Nuova Vendita</h2>
+    <form id="sale-form">
+      <input type="text" id="product" placeholder="Nome Prodotto / Sneaker" required>
+      <input type="text" id="buyer" placeholder="Acquirente / Persona" required>
+      <input type="number" id="buy-price" placeholder="Prezzo Acquisto (€)" step="0.01" required>
+      <input type="number" id="sell-price" placeholder="Prezzo Vendita (€)" step="0.01" required>
+      <button type="submit">+ AGGIUNGI VENDITA</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Storico Vendite</h2>
+    <div style="overflow-x: auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Prodotto</th>
+            <th>Acquirente</th>
+            <th>Acquisto</th>
+            <th>Vendita</th>
+            <th>Profitto</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="sales-table"></tbody>
+      </table>
     </div>
+  </div>
 
-    <div id="history" class="page">
-        <h2 style="font-family:'Montserrat'; margin-bottom:20px; font-size:18px;">VENDITE RECENTI</h2>
-        <div id="list-history"></div>
-    </div>
+</div>
 
-    <div class="nav">
-        <a href="#" class="nav-btn active" onclick="vai('home')">VETRINA</a>
-        <a href="#" class="nav-btn" onclick="vai('history')">STORICO</a>
-    </div>
+<script>
+  let sales = JSON.parse(localStorage.getItem('kzl_sales')) || [];
+  let profitGoal = parseFloat(localStorage.getItem('kzl_goal')) || 1000;
 
-    <script>
-        const KEY = 'KZL_SISTEMA_STABILE_V5';
-        
-        // DATI INIZIALI CON LE TUE FOTO
-        const scarpeIniziali = [
-            { id: 1, n: "LV SKATE", p: 100, l: 950, img: "lvskate.jpg" },
-            { id: 2, n: "ALEXANDER MCQUEEN", p: 60, l: 450, img: "mcqueen.jpg" },
-            { id: 3, n: "ASICS GEL NYC", p: 45, l: 165, img: "asics.webp" },
-            { id: 4, n: "JORDAN 4 BLACK GOLD", p: 80, l: 380, img: "jordan4.jpg" },
-            { id: 5, n: "NUMERIS", p: 50, l: 200, img: "" },
-            { id: 6, n: "GOLDEN GOOSE", p: 70, l: 420, img: "" },
-            { id: 7, n: "NOCTA", p: 40, l: 190, img: "" },
-            { id: 8, n: "OFF WHITE OOF", p: 80, l: 380, img: "" },
-            { id: 9, n: "CAMPUS", p: 30, l: 120, img: "" },
-            { id: 10, n: "DUNK SB", p: 45, l: 160, img: "" }
-        ];
+  const saleForm = document.getElementById('sale-form');
+  const salesTable = document.getElementById('sales-table');
+  const totalSalesEl = document.getElementById('total-sales');
+  const totalProfitEl = document.getElementById('total-profit');
 
-        let dati = JSON.parse(localStorage.getItem(KEY)) || { scarpe: scarpeIniziali, vendite: [] };
+  const goalInput = document.getElementById('goal-input');
+  const setGoalBtn = document.getElementById('set-goal-btn');
+  const goalBar = document.getElementById('goal-bar');
+  const goalProgressText = document.getElementById('goal-progress-text');
+  const goalTargetText = document.getElementById('goal-target-text');
 
-        function vai(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(event) event.currentTarget.classList.add('active');
-            if(id === 'history') renderHistory();
-        }
+  goalInput.value = profitGoal;
 
-        function salva() {
-            localStorage.setItem(KEY, JSON.stringify(dati));
-            render();
-        }
+  setGoalBtn.addEventListener('click', () => {
+    const newGoal = parseFloat(goalInput.value);
+    if (!isNaN(newGoal) && newGoal > 0) {
+      profitGoal = newGoal;
+      localStorage.setItem('kzl_goal', profitGoal);
+      saveAndRender();
+    }
+  });
 
-        function sposta(id, direzione) {
-            let index = dati.scarpe.findIndex(x => x.id === id);
-            let nuovoIndex = index + direzione;
-            if (nuovoIndex >= 0 && nuovoIndex < dati.scarpe.length) {
-                let temp = dati.scarpe[index];
-                dati.scarpe[index] = dati.scarpe[nuovoIndex];
-                dati.scarpe[nuovoIndex] = temp;
-                salva();
-            }
-        }
+  saleForm.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-        function vendi(id) {
-            let s = dati.scarpe.find(x => x.id === id);
-            dati.vendite.push({ n: s.n, p: s.p, l: s.l, d: new Date().toLocaleDateString() });
-            salva();
-            alert("VENDITA REGISTRATA: " + s.n);
-        }
+    const product = document.getElementById('product').value;
+    const buyer = document.getElementById('buyer').value;
+    const buyPrice = parseFloat(document.getElementById('buy-price').value);
+    const sellPrice = parseFloat(document.getElementById('sell-price').value);
+    const profit = sellPrice - buyPrice;
 
-        function aggiungi() {
-            let n = prompt("Nome Scarpa:"); if(!n) return;
-            let l = prompt("Lordo (€):") || 0;
-            let p = prompt("Profitto (€):") || 0;
-            dati.scarpe.push({ id: Date.now(), n, l: parseFloat(l), p: parseFloat(p), img: "" });
-            salva();
-        }
+    const newSale = {
+      id: Date.now(),
+      product,
+      buyer,
+      buyPrice,
+      sellPrice,
+      profit
+    };
 
-        function render() {
-            let g = document.getElementById('main-grid');
-            g.innerHTML = dati.scarpe.map(s => `
-                <div class="card">
-                    <div class="order-controls">
-                        <div class="order-btn" onclick="sposta(${s.id}, -1)">‹</div>
-                        <div class="order-btn" onclick="sposta(${s.id}, 1)">›</div>
-                    </div>
-                    <img src="${s.img || 'https://via.placeholder.com/150/111/333?text=NO+IMAGE'}" onerror="this.src='https://via.placeholder.com/150/111/333?text=KICKZONE'">
-                    <div class="card-info">
-                        <b>${s.n}</b>
-                        <button class="btn-vendi" onclick="vendi(${s.id})">VENDI (+${s.p}€)</button>
-                    </div>
-                </div>
-            `).join('');
+    sales.push(newSale);
+    saveAndRender();
+    saleForm.reset();
+  });
 
-            document.getElementById('val-lordo').innerText = dati.vendite.reduce((a,b) => a+b.l, 0);
-            document.getElementById('val-profit').innerText = dati.vendite.reduce((a,b) => a+b.p, 0);
-        }
+  function deleteSale(id) {
+    sales = sales.filter(sale => sale.id !== id);
+    saveAndRender();
+  }
 
-        function renderHistory() {
-            document.getElementById('list-history').innerHTML = dati.vendite.slice().reverse().map(v => `
-                <div style="background:#111; padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid #222;">
-                    <span><b style="font-size:13px;">${v.n}</b><br><small style="color:#555;">${v.d}</small></span>
-                    <b style="color:var(--green); font-size:16px;">+${v.p}€</b>
-                </div>
-            `).join('') || "<p style='text-align:center; color:#333; padding:20px;'>Nessuna vendita registrata.</p>";
-        }
+  function saveAndRender() {
+    localStorage.setItem('kzl_sales', JSON.stringify(sales));
 
-        function pulisci() { 
-            if(confirm("Attenzione: vuoi resettare l'ordine e lo storico vendite?")) { 
-                localStorage.clear(); 
-                location.reload(); 
-            } 
-        }
+    salesTable.innerHTML = '';
 
-        render();
-    </script>
+    let totalSalesSum = 0;
+    let totalProfitSum = 0;
+
+    sales.forEach(sale => {
+      totalSalesSum += sale.sellPrice;
+      totalProfitSum += sale.profit;
+
+      const row = document.createElement('tr');
+      const profitClass = sale.profit >= 0 ? 'positive' : 'negative';
+
+      row.innerHTML = `
+        <td><strong>${sale.product}</strong></td>
+        <td>${sale.buyer}</td>
+        <td>€ ${sale.buyPrice.toFixed(2)}</td>
+        <td>€ ${sale.sellPrice.toFixed(2)}</td>
+        <td class="${profitClass}">€ ${sale.profit.toFixed(2)}</td>
+        <td style="text-align: right;"><button class="btn-delete" onclick="deleteSale(${sale.id})">✕</button></td>
+      `;
+      salesTable.appendChild(row);
+    });
+
+    totalSalesEl.textContent = `€ ${totalSalesSum.toFixed(2)}`;
+    totalProfitEl.textContent = `€ ${totalProfitSum.toFixed(2)}`;
+
+    goalTargetText.textContent = `Target: € ${profitGoal.toFixed(2)}`;
+    const progressPercent = Math.max(0, Math.min((totalProfitSum / profitGoal) * 100, 100));
+    
+    goalBar.style.width = `${progressPercent}%`;
+    goalProgressText.textContent = `${progressPercent.toFixed(1)}% completato`;
+  }
+
+  saveAndRender();
+</script>
+
 </body>
 </html>
