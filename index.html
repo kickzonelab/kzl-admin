@@ -53,9 +53,17 @@
     .goal-input-group input { flex: 1; width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: #0d1117; color: #fff; }
     .goal-input-group button { padding: 8px 15px; background: var(--accent-blue); border: none; border-radius: 6px; font-weight: 600; cursor: pointer; color: #000; }
 
-    .progress-bar-bg { width: 100%; height: 12px; background: #21262d; border-radius: 6px; overflow: hidden; margin-top: 8px; }
-    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #00e5ff, #00e676); width: 0%; transition: width 0.4s ease; }
-    .progress-text { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; display: flex; justify-content: space-between; }
+    /* Doppia Barra Progresso */
+    .progress-bar-bg { width: 100%; height: 14px; background: #21262d; border-radius: 7px; overflow: hidden; margin-top: 8px; position: relative; }
+    .progress-bar-fill-gross { height: 100%; background: var(--accent-blue); width: 0%; transition: width 0.4s ease; position: absolute; left: 0; top: 0; }
+    .progress-bar-fill-profit { height: 100%; background: var(--success-color); width: 0%; transition: width 0.4s ease; position: absolute; left: 0; top: 0; }
+    
+    .progress-text-container { margin-top: 10px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 4px; }
+    .progress-legend { display: flex; justify-content: space-between; align-items: center; }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot.gross { background-color: var(--accent-blue); }
+    .dot.profit { background-color: var(--success-color); }
 
     /* Form Inserimento (Ottimizzato Mobile) */
     form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -100,18 +108,24 @@
     </div>
 
     <div class="card">
-      <h2>Obiettivo Profitto</h2>
+      <h2>Obiettivo Profitto & Lordo</h2>
       <div class="goal-input-group">
         <input type="number" id="goal-input" placeholder="Imposta Target (€)" value="1000">
         <button id="set-goal-btn">Salva</button>
       </div>
       <div>
         <div class="progress-bar-bg">
-          <div class="progress-bar-fill" id="goal-bar"></div>
+          <div class="progress-bar-fill-gross" id="goal-bar-gross"></div>
+          <div class="progress-bar-fill-profit" id="goal-bar-profit"></div>
         </div>
-        <div class="progress-text">
-          <span id="goal-progress-text">0.0% completato</span>
-          <span id="goal-target-text">Target: € 1000</span>
+        <div class="progress-text-container">
+          <div class="progress-legend">
+            <span class="legend-item"><i class="dot gross"></i> Lordo Totale: <strong id="gross-progress-text">0.0%</strong></span>
+            <span class="legend-item"><i class="dot profit"></i> Netto Profitto: <strong id="profit-progress-text">0.0%</strong></span>
+          </div>
+          <div style="text-align: right; color: var(--text-muted); font-size: 0.75rem; margin-top: 2px;" id="goal-target-text">
+            Target: € 1000.00
+          </div>
         </div>
       </div>
     </div>
@@ -160,8 +174,10 @@
 
   const goalInput = document.getElementById('goal-input');
   const setGoalBtn = document.getElementById('set-goal-btn');
-  const goalBar = document.getElementById('goal-bar');
-  const goalProgressText = document.getElementById('goal-progress-text');
+  const goalBarGross = document.getElementById('goal-bar-gross');
+  const goalBarProfit = document.getElementById('goal-bar-profit');
+  const grossProgressText = document.getElementById('gross-progress-text');
+  const profitProgressText = document.getElementById('profit-progress-text');
   const goalTargetText = document.getElementById('goal-target-text');
 
   goalInput.value = profitGoal;
@@ -233,10 +249,16 @@
     totalProfitEl.textContent = `€ ${totalProfitSum.toFixed(2)}`;
 
     goalTargetText.textContent = `Target: € ${profitGoal.toFixed(2)}`;
-    const progressPercent = Math.max(0, Math.min((totalProfitSum / profitGoal) * 100, 100));
     
-    goalBar.style.width = `${progressPercent}%`;
-    goalProgressText.textContent = `${progressPercent.toFixed(1)}% completato`;
+    // Calcolo Percentuali
+    const grossPercent = Math.max(0, Math.min((totalSalesSum / profitGoal) * 100, 100));
+    const profitPercent = Math.max(0, Math.min((totalProfitSum / profitGoal) * 100, 100));
+    
+    goalBarGross.style.width = `${grossPercent}%`;
+    goalBarProfit.style.width = `${profitPercent}%`;
+    
+    grossProgressText.textContent = `${grossPercent.toFixed(1)}%`;
+    profitProgressText.textContent = `${profitPercent.toFixed(1)}%`;
   }
 
   saveAndRender();
